@@ -1,56 +1,66 @@
-# Welcome to your Expo app 👋
+# 📱 MindCash Mobile - "Do gasto ao significado"
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<p align="center">
+  <b>Aplicativo Mobile Companion (Auxiliar) do Projeto de TCC MindCash</b><br>
+  Focado em entradas rápidas de despesas e assinaturas com percepção emocional do gasto.
+</p>
 
-## Get started
+---
 
-1. Install dependencies
+## 📌 Sobre o Projeto
 
+O **MindCash Mobile** é uma extensão prática e portátil do ecossistema **MindCash**. Enquanto a plataforma Web oferece análises financeiras profundas, gráficos e gestão completa, o aplicativo mobile foi projetado para ser o **ponto de contato instantâneo** do usuário no momento do consumo.
+
+### 💡 Objetivo Central
+Permitir que o usuário registre **despesas e assinaturas em poucos segundos**, atribuindo não apenas valores e categorias, mas também o **significado/sentimento** por trás daquele gasto. Todos os dados são sincronizados em tempo real com a versão Web via **Supabase**.
+
+---
+
+## 🛠️ Stack Tecnológica
+
+- **Framework Mobile:** [React Native](https://reactnative.dev/) (v0.86) + [Expo](https://expo.dev/) (v57)
+- **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
+- **Roteamento:** [Expo Router](https://docs.expo.dev/router/introduction/) (File-based Routing)
+- **Backend & Auth:** [Supabase](https://supabase.com/) (PostgreSQL + Realtime Auth)
+- **Armazenamento Local:** `@react-native-async-storage/async-storage`
+
+---
+
+## 🚀 Como Executar o Projeto
+
+### Pré-requisitos
+- Node.js instalado na máquina.
+- Aplicativo **Expo Go** instalado no seu celular (disponível na Play Store e App Store).
+
+### Passo a Passo
+
+1. **Clonar o repositório:**
+   ```bash
+   git clone https://github.com/Victor-furlan/TCC-mobile.git
+   cd TCC-mobile
+   ```
+
+2. **Instalar as dependências:**
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. **Iniciar o servidor do Expo:**
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+4. **Rodar no celular:**
+   - Abra o aplicativo **Expo Go** no celular.
+   - Escaneie o **QR Code** exibido no terminal.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 👨‍💻 Desenvolvedores (Equipe TCC)
+- **Victor Furlan**
+- **Pérola Evellyn**
+- **Klayton Mendes**
 
-## Get a fresh project
+---
+*Projeto desenvolvido para o Trabalho de Conclusão de Curso (TCC) e disciplina de Programação Mobile II.*
 
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
