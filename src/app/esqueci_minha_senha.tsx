@@ -15,30 +15,30 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-export default function LoginScreen() {
+export default function EsqueciSenhaScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
   const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
   const [carregando, setCarregando] = useState(false);
+  const [enviado, setEnviado] = useState(false);
   const [erro, setErro] = useState('');
 
   const logo = isDark
     ? require('@/assets/images/logo_completa_mindcash_escura.png')
     : require('@/assets/images/logo_completa_mindcash_clara.png');
 
-  async function handleLogin() {
-    if (!email || !senha) {
-      setErro('Preencha todos os campos.');
+  async function handleEnviar() {
+    if (!email) {
+      setErro('Digite seu e-mail.');
       return;
     }
     setErro('');
     setCarregando(true);
     setTimeout(() => {
       setCarregando(false);
-      router.replace('/(tabs)');
+      setEnviado(true);
     }, 1000);
   }
 
@@ -68,57 +68,57 @@ export default function LoginScreen() {
           </View>
 
           <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
-            <Text style={[styles.cardTitulo, { color: textPrimary }]}>Entrar na conta</Text>
+            {!enviado ? (
+              <>
+                <View style={styles.cardHeader}>
+                  <Text style={[styles.cardTitulo, { color: textPrimary }]}>Esqueci minha senha</Text>
+                  <Text style={[styles.cardDescricao, { color: textSecondary }]}>
+                    Digite seu e-mail e enviaremos um link para redefinir sua senha.
+                  </Text>
+                </View>
 
-            <View style={styles.campo}>
-              <Text style={[styles.label, { color: textSecondary }]}>E-mail</Text>
-              <TextInput
-                style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
-                placeholder="seu@email.com"
-                placeholderTextColor={textSecondary}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={text => { setEmail(text); setErro(''); }}
-              />
-            </View>
+                <View style={styles.campo}>
+                  <Text style={[styles.label, { color: textSecondary }]}>E-mail</Text>
+                  <TextInput
+                    style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+                    placeholder="seu@email.com"
+                    placeholderTextColor={textSecondary}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    value={email}
+                    onChangeText={text => { setEmail(text); setErro(''); }}
+                  />
+                </View>
 
-            <View style={styles.campo}>
-              <Text style={[styles.label, { color: textSecondary }]}>Senha</Text>
-              <TextInput
-                style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
-                placeholder="••••••••"
-                placeholderTextColor={textSecondary}
-                secureTextEntry
-                value={senha}
-                onChangeText={text => { setSenha(text); setErro(''); }}
-              />
-            </View>
+                {erro ? <Text style={styles.erro}>{erro}</Text> : null}
 
-            {erro ? <Text style={styles.erro}>{erro}</Text> : null}
-
-            <TouchableOpacity
-              style={[styles.botao, carregando && styles.botaoDesabilitado]}
-              onPress={handleLogin}
-              disabled={carregando}
-              activeOpacity={0.85}
-            >
-              {carregando
-                ? <ActivityIndicator color="#fff" />
-                : <Text style={styles.botaoTexto}>Entrar</Text>
-              }
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.esqueciContainer} activeOpacity={0.7} onPress={() => router.push('/esqueci_minha_senha')}>
-              <Text style={[styles.linkTexto, { color: textSecondary }]}>Esqueci minha senha</Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.botao, carregando && styles.botaoDesabilitado]}
+                  onPress={handleEnviar}
+                  disabled={carregando}
+                  activeOpacity={0.85}
+                >
+                  {carregando
+                    ? <ActivityIndicator color="#fff" />
+                    : <Text style={styles.botaoTexto}>Enviar link</Text>
+                  }
+                </TouchableOpacity>
+              </>
+            ) : (
+              <View style={styles.sucessoContainer}>
+                <Text style={styles.sucessoIcone}>✉️</Text>
+                <Text style={[styles.sucessoTitulo, { color: textPrimary }]}>E-mail enviado!</Text>
+                <Text style={[styles.sucessoTexto, { color: textSecondary }]}>
+                  Verifique sua caixa de entrada e clique no link para redefinir sua senha.
+                </Text>
+              </View>
+            )}
           </View>
 
           <View style={styles.rodape}>
-            <Text style={[styles.rodapeTexto, { color: textSecondary }]}>Não tem conta? </Text>
-              <TouchableOpacity activeOpacity={0.7} onPress={() => router.push('/criar_conta')}>
-                <Text style={styles.link}>Criar conta</Text>
-              </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
+              <Text style={styles.link}>← Voltar para o login</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -161,12 +161,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 20,
     paddingVertical: 24,
-    gap: 14,
+    gap: 16,
+  },
+  cardHeader: {
+    gap: 6,
   },
   cardTitulo: {
     fontSize: 18,
     fontWeight: '700',
-    marginBottom: 4,
+  },
+  cardDescricao: {
+    fontSize: 13,
+    lineHeight: 20,
   },
   campo: {
     gap: 6,
@@ -209,12 +215,22 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.3,
   },
-  esqueciContainer: {
+  sucessoContainer: {
     alignItems: 'center',
-    paddingVertical: 4,
+    gap: 12,
+    paddingVertical: 8,
   },
-  linkTexto: {
+  sucessoIcone: {
+    fontSize: 48,
+  },
+  sucessoTitulo: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  sucessoTexto: {
     fontSize: 13,
+    textAlign: 'center',
+    lineHeight: 20,
   },
   link: {
     color: AZUL_CLARO,
@@ -222,11 +238,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   rodape: {
-    flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-  },
-  rodapeTexto: {
-    fontSize: 14,
   },
 });

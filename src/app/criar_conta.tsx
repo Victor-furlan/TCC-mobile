@@ -11,17 +11,20 @@ import {
   Image,
   useColorScheme,
   StatusBar,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-export default function LoginScreen() {
+export default function CriarContaScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
+  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
 
@@ -29,16 +32,24 @@ export default function LoginScreen() {
     ? require('@/assets/images/logo_completa_mindcash_escura.png')
     : require('@/assets/images/logo_completa_mindcash_clara.png');
 
-  async function handleLogin() {
-    if (!email || !senha) {
+  async function handleCriarConta() {
+    if (!nome || !email || !senha || !confirmarSenha) {
       setErro('Preencha todos os campos.');
+      return;
+    }
+    if (senha !== confirmarSenha) {
+      setErro('As senhas não coincidem.');
+      return;
+    }
+    if (senha.length < 6) {
+      setErro('A senha deve ter pelo menos 6 caracteres.');
       return;
     }
     setErro('');
     setCarregando(true);
     setTimeout(() => {
       setCarregando(false);
-      router.replace('/(tabs)');
+      router.replace('/');
     }, 1000);
   }
 
@@ -59,7 +70,11 @@ export default function LoginScreen() {
         style={[styles.container, { backgroundColor: bg }]}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.inner}>
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
           <View style={styles.header}>
             <Image source={logo} style={styles.logo} resizeMode="contain" />
             <Text style={[styles.subtitulo, { color: textSecondary }]}>
@@ -68,7 +83,19 @@ export default function LoginScreen() {
           </View>
 
           <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
-            <Text style={[styles.cardTitulo, { color: textPrimary }]}>Entrar na conta</Text>
+            <Text style={[styles.cardTitulo, { color: textPrimary }]}>Criar conta</Text>
+
+            <View style={styles.campo}>
+              <Text style={[styles.label, { color: textSecondary }]}>Nome</Text>
+              <TextInput
+                style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+                placeholder="Seu nome"
+                placeholderTextColor={textSecondary}
+                autoCapitalize="words"
+                value={nome}
+                onChangeText={text => { setNome(text); setErro(''); }}
+              />
+            </View>
 
             <View style={styles.campo}>
               <Text style={[styles.label, { color: textSecondary }]}>E-mail</Text>
@@ -87,7 +114,7 @@ export default function LoginScreen() {
               <Text style={[styles.label, { color: textSecondary }]}>Senha</Text>
               <TextInput
                 style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
-                placeholder="••••••••"
+                placeholder="Mínimo 6 caracteres"
                 placeholderTextColor={textSecondary}
                 secureTextEntry
                 value={senha}
@@ -95,32 +122,40 @@ export default function LoginScreen() {
               />
             </View>
 
+            <View style={styles.campo}>
+              <Text style={[styles.label, { color: textSecondary }]}>Confirmar senha</Text>
+              <TextInput
+                style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+                placeholder="Repita a senha"
+                placeholderTextColor={textSecondary}
+                secureTextEntry
+                value={confirmarSenha}
+                onChangeText={text => { setConfirmarSenha(text); setErro(''); }}
+              />
+            </View>
+
             {erro ? <Text style={styles.erro}>{erro}</Text> : null}
 
             <TouchableOpacity
               style={[styles.botao, carregando && styles.botaoDesabilitado]}
-              onPress={handleLogin}
+              onPress={handleCriarConta}
               disabled={carregando}
               activeOpacity={0.85}
             >
               {carregando
                 ? <ActivityIndicator color="#fff" />
-                : <Text style={styles.botaoTexto}>Entrar</Text>
+                : <Text style={styles.botaoTexto}>Criar conta</Text>
               }
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.esqueciContainer} activeOpacity={0.7} onPress={() => router.push('/esqueci_minha_senha')}>
-              <Text style={[styles.linkTexto, { color: textSecondary }]}>Esqueci minha senha</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.rodape}>
-            <Text style={[styles.rodapeTexto, { color: textSecondary }]}>Não tem conta? </Text>
-              <TouchableOpacity activeOpacity={0.7} onPress={() => router.push('/criar_conta')}>
-                <Text style={styles.link}>Criar conta</Text>
-              </TouchableOpacity>
+            <Text style={[styles.rodapeTexto, { color: textSecondary }]}>Já tem conta? </Text>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
+              <Text style={styles.link}>Entrar</Text>
+            </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -136,11 +171,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  inner: {
-    flex: 1,
+  scroll: {
+    flexGrow: 1,
     paddingHorizontal: 24,
-    justifyContent: 'center',
+    paddingVertical: 40,
     gap: 24,
+    justifyContent: 'center',
   },
   header: {
     alignItems: 'center',
@@ -208,13 +244,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.3,
-  },
-  esqueciContainer: {
-    alignItems: 'center',
-    paddingVertical: 4,
-  },
-  linkTexto: {
-    fontSize: 13,
   },
   link: {
     color: AZUL_CLARO,
