@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useTema } from '@/contexts/temaContexto';
 
 const MOCK = {
   nome: 'Victor',
@@ -27,8 +28,7 @@ const MOCK = {
 
 export default function DashboardScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { isDark } = useTema();
 
   const bg = isDark ? '#0a1628' : '#eef4ff';
   const card = isDark ? '#111f35' : '#ffffff';

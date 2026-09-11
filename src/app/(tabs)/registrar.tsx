@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useTema } from '@/contexts/temaContexto';
 
 const CATEGORIAS = [
   { id: 'entretenimento', label: 'Entretenimento', icone: 'film-outline' },
@@ -59,8 +60,7 @@ function Estrelas({ valor, onChange, textSecondary }: { valor: number; onChange:
 }
 
 export default function RegistrarScreen() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { isDark } = useTema();
 
   const [tipo, setTipo] = useState<'despesa' | 'assinatura'>('despesa');
 

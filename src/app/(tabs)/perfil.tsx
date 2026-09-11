@@ -1,14 +1,16 @@
+import { useRef, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  useColorScheme,
   StatusBar,
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import { useTema } from '@/contexts/temaContexto';
 
 const MOCK_USUARIO = {
   nome: 'Victor Furlan',
@@ -52,8 +54,10 @@ function ItemConfig({ icone, label, valor, cor, onPress, textPrimary, textSecond
 }
 
 export default function PerfilScreen() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { isDark, tema, setTema } = useTema();
+
+  // Bottom sheet de seleção de tema (claro, escuro ou sistema)
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const bg = isDark ? '#0a1628' : '#eef4ff';
   const card = isDark ? '#111f35' : '#ffffff';
@@ -63,8 +67,12 @@ export default function PerfilScreen() {
   const textSecondary = isDark ? '#6b8aaa' : '#5a7a9a';
 
   const valorHora = (MOCK_USUARIO.renda / MOCK_USUARIO.horasTrabalhadas).toFixed(2);
-
   const itemProps = { textPrimary, textSecondary, border, isDark };
+
+  const renderBackdrop = useCallback(
+    (props: any) => <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />,
+    []
+  );
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: bg }]}>
@@ -120,18 +128,8 @@ export default function PerfilScreen() {
         {/* Configurações */}
         <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
           <Text style={[styles.cardTitulo, { color: textPrimary }]}>Configurações</Text>
-          <ItemConfig
-            icone="person-outline"
-            label="Editar perfil"
-            onPress={() => {}}
-            {...itemProps}
-          />
-          <ItemConfig
-            icone="lock-closed-outline"
-            label="Alterar senha"
-            onPress={() => {}}
-            {...itemProps}
-          />
+          <ItemConfig icone="person-outline" label="Editar perfil" onPress={() => {}} {...itemProps} />
+          <ItemConfig icone="lock-closed-outline" label="Alterar senha" onPress={() => {}} {...itemProps} />
           <ItemConfig
             icone="cash-outline"
             label="Renda mensal"
@@ -149,8 +147,8 @@ export default function PerfilScreen() {
           <ItemConfig
             icone="contrast-outline"
             label="Tema"
-            valor={isDark ? 'Escuro' : 'Claro'}
-            onPress={() => {}}
+            valor={tema === 'claro' ? 'Claro' : tema === 'escuro' ? 'Escuro' : 'Sistema'}
+            onPress={() => bottomSheetRef.current?.expand()}
             {...itemProps}
           />
         </View>
@@ -158,32 +156,61 @@ export default function PerfilScreen() {
         {/* Sobre */}
         <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
           <Text style={[styles.cardTitulo, { color: textPrimary }]}>Sobre</Text>
-          <ItemConfig
-            icone="information-circle-outline"
-            label="Versão do app"
-            valor="1.0.0"
-            {...itemProps}
-          />
-          <ItemConfig
-            icone="globe-outline"
-            label="Acessar versão web"
-            onPress={() => {}}
-            {...itemProps}
-          />
+          <ItemConfig icone="information-circle-outline" label="Versão do app" valor="1.0.0" {...itemProps} />
+          <ItemConfig icone="globe-outline" label="Acessar versão web" onPress={() => {}} {...itemProps} />
         </View>
 
         {/* Sair */}
         <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
-          <ItemConfig
-            icone="log-out-outline"
-            label="Sair"
-            cor="#ff6b6b"
-            onPress={() => {}}
-            {...itemProps}
-          />
+          <ItemConfig icone="log-out-outline" label="Sair" cor="#ff6b6b" onPress={() => {}} {...itemProps} />
         </View>
-
       </ScrollView>
+
+      {/* Bottom sheet de seleção de tema — deslize pra baixo pra fechar */}
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        snapPoints={['35%']}
+        enablePanDownToClose
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{ backgroundColor: card }}
+        handleIndicatorStyle={{ backgroundColor: border }}
+      >
+        <BottomSheetView style={[styles.sheetContent, { backgroundColor: card }]}>
+          <Text style={[styles.sheetTitulo, { color: textPrimary }]}>Tema</Text>
+          {[
+            { id: 'claro', label: 'Claro', icone: 'sunny-outline' },
+            { id: 'escuro', label: 'Escuro', icone: 'moon-outline' },
+            { id: 'sistema', label: 'Sistema', icone: 'phone-portrait-outline' },
+          ].map(opcao => (
+            <TouchableOpacity
+              key={opcao.id}
+              style={[
+                styles.sheetOpcao,
+                { borderColor: border },
+                tema === opcao.id && { borderColor: '#2E9EFF', backgroundColor: 'rgba(46,158,255,0.08)' },
+              ]}
+              onPress={() => {
+                setTema(opcao.id as any);
+                bottomSheetRef.current?.close();
+              }}
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name={opcao.icone as any}
+                size={20}
+                color={tema === opcao.id ? '#2E9EFF' : textSecondary}
+              />
+              <Text style={[styles.sheetOpcaoTexto, { color: tema === opcao.id ? '#2E9EFF' : textPrimary }]}>
+                {opcao.label}
+              </Text>
+              {tema === opcao.id && (
+                <Ionicons name="checkmark-circle" size={20} color="#2E9EFF" style={{ marginLeft: 'auto' }} />
+              )}
+            </TouchableOpacity>
+          ))}
+        </BottomSheetView>
+      </BottomSheet>
     </SafeAreaView>
   );
 }
@@ -294,5 +321,27 @@ const styles = StyleSheet.create({
   },
   itemValor: {
     fontSize: 13,
+  },
+  sheetContent: {
+    padding: 20,
+    gap: 12,
+    paddingBottom: 36,
+  },
+  sheetTitulo: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  sheetOpcao: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  sheetOpcaoTexto: {
+    fontSize: 15,
+    fontWeight: '500',
   },
 });

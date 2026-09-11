@@ -15,11 +15,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTema } from '@/contexts/temaContexto';
 
 export default function CriarContaScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { isDark } = useTema();
 
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');

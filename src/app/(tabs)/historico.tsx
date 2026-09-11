@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useTema } from '@/contexts/temaContexto';
 
 const MOCK_HISTORICO = [
   { id: '1', descricao: 'iFood', valor: 45.9, tipo: 'despesa', categoria: 'Alimentação', emoji: '😰', data: '08/09/2026' },
@@ -63,8 +64,7 @@ function ListaLancamentos({ itens, isDark }: { itens: typeof MOCK_HISTORICO; isD
 }
 
 export default function HistoricoScreen() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { isDark } = useTema();
 
   const bg = isDark ? '#0a1628' : '#eef4ff';
   const card = isDark ? '#111f35' : '#ffffff';
