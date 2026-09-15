@@ -9,17 +9,19 @@ import {
   Platform,
   ActivityIndicator,
   Image,
-  useColorScheme,
   StatusBar,
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTema } from '@/contexts/temaContexto';
+import { useCores } from '@/constants/useCores';
+import { CoresFixas } from '@/constants/cores';
 
 export default function CriarContaScreen() {
   const router = useRouter();
   const { isDark } = useTema();
+  const cores = useCores();
 
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -53,21 +55,14 @@ export default function CriarContaScreen() {
     }, 1000);
   }
 
-  const bg = isDark ? '#0a1628' : '#eef4ff';
-  const card = isDark ? '#111f35' : '#ffffff';
-  const border = isDark ? '#1e3050' : '#dde8f5';
-  const inputBg = isDark ? '#0d1a2e' : '#f5f9ff';
-  const textPrimary = isDark ? '#e8f0fe' : '#0d1b2a';
-  const textSecondary = isDark ? '#6b8aaa' : '#5a7a9a';
-
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: bg }]} edges={['bottom']}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.bg }]} edges={['bottom']}>
       <StatusBar
         barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={bg}
+        backgroundColor={cores.bg}
       />
       <KeyboardAvoidingView
-        style={[styles.container, { backgroundColor: bg }]}
+        style={[styles.container, { backgroundColor: cores.bg }]}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
@@ -77,20 +72,20 @@ export default function CriarContaScreen() {
         >
           <View style={styles.header}>
             <Image source={logo} style={styles.logo} resizeMode="contain" />
-            <Text style={[styles.subtitulo, { color: textSecondary }]}>
+            <Text style={[styles.subtitulo, { color: cores.textSecundario }]}>
               DO GASTO AO SIGNIFICADO
             </Text>
           </View>
 
-          <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
-            <Text style={[styles.cardTitulo, { color: textPrimary }]}>Criar conta</Text>
+          <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
+            <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Criar conta</Text>
 
             <View style={styles.campo}>
-              <Text style={[styles.label, { color: textSecondary }]}>Nome</Text>
+              <Text style={[styles.label, { color: cores.textSecundario }]}>Nome</Text>
               <TextInput
-                style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+                style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
                 placeholder="Seu nome"
-                placeholderTextColor={textSecondary}
+                placeholderTextColor={cores.textSecundario}
                 autoCapitalize="words"
                 value={nome}
                 onChangeText={text => { setNome(text); setErro(''); }}
@@ -98,11 +93,11 @@ export default function CriarContaScreen() {
             </View>
 
             <View style={styles.campo}>
-              <Text style={[styles.label, { color: textSecondary }]}>E-mail</Text>
+              <Text style={[styles.label, { color: cores.textSecundario }]}>E-mail</Text>
               <TextInput
-                style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+                style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
                 placeholder="seu@email.com"
-                placeholderTextColor={textSecondary}
+                placeholderTextColor={cores.textSecundario}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={email}
@@ -111,11 +106,11 @@ export default function CriarContaScreen() {
             </View>
 
             <View style={styles.campo}>
-              <Text style={[styles.label, { color: textSecondary }]}>Senha</Text>
+              <Text style={[styles.label, { color: cores.textSecundario }]}>Senha</Text>
               <TextInput
-                style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+                style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
                 placeholder="Mínimo 6 caracteres"
-                placeholderTextColor={textSecondary}
+                placeholderTextColor={cores.textSecundario}
                 secureTextEntry
                 value={senha}
                 onChangeText={text => { setSenha(text); setErro(''); }}
@@ -123,11 +118,11 @@ export default function CriarContaScreen() {
             </View>
 
             <View style={styles.campo}>
-              <Text style={[styles.label, { color: textSecondary }]}>Confirmar senha</Text>
+              <Text style={[styles.label, { color: cores.textSecundario }]}>Confirmar senha</Text>
               <TextInput
-                style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+                style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
                 placeholder="Repita a senha"
-                placeholderTextColor={textSecondary}
+                placeholderTextColor={cores.textSecundario}
                 secureTextEntry
                 value={confirmarSenha}
                 onChangeText={text => { setConfirmarSenha(text); setErro(''); }}
@@ -143,14 +138,14 @@ export default function CriarContaScreen() {
               activeOpacity={0.85}
             >
               {carregando
-                ? <ActivityIndicator color="#fff" />
+                ? <ActivityIndicator color={CoresFixas.branco} />
                 : <Text style={styles.botaoTexto}>Criar conta</Text>
               }
             </TouchableOpacity>
           </View>
 
           <View style={styles.rodape}>
-            <Text style={[styles.rodapeTexto, { color: textSecondary }]}>Já tem conta? </Text>
+            <Text style={[styles.rodapeTexto, { color: cores.textSecundario }]}>Já tem conta? </Text>
             <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
               <Text style={styles.link}>Entrar</Text>
             </TouchableOpacity>
@@ -160,9 +155,6 @@ export default function CriarContaScreen() {
     </SafeAreaView>
   );
 }
-
-const AZUL = '#1560A8';
-const AZUL_CLARO = '#2E9EFF';
 
 const styles = StyleSheet.create({
   safe: {
@@ -220,17 +212,17 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   erro: {
-    color: '#ff6b6b',
+    color: CoresFixas.erro,
     fontSize: 12,
     marginTop: -4,
   },
   botao: {
-    backgroundColor: AZUL,
+    backgroundColor: CoresFixas.azul,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
     marginTop: 4,
-    shadowColor: AZUL,
+    shadowColor: CoresFixas.azul,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
@@ -240,13 +232,13 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   botaoTexto: {
-    color: '#fff',
+    color: CoresFixas.branco,
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.3,
   },
   link: {
-    color: AZUL_CLARO,
+    color: CoresFixas.azulClaro,
     fontSize: 14,
     fontWeight: '600',
   },

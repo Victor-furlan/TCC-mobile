@@ -3,12 +3,14 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  useColorScheme,
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTema } from '@/contexts/temaContexto';
+import { useCores } from '@/constants/useCores';
+import { CoresFixas } from '@/constants/cores';
+import type { Temacores } from '@/constants/cores';
 
 const MOCK_HISTORICO = [
   { id: '1', descricao: 'iFood', valor: 45.9, tipo: 'despesa', categoria: 'Alimentação', emoji: '😰', data: '08/09/2026' },
@@ -21,17 +23,11 @@ const MOCK_HISTORICO = [
   { id: '8', descricao: 'Restaurante', valor: 120.0, tipo: 'despesa', categoria: 'Alimentação', emoji: '😊', data: '01/09/2026' },
 ];
 
-function ListaLancamentos({ itens, isDark }: { itens: typeof MOCK_HISTORICO; isDark: boolean }) {
-  const card = isDark ? '#111f35' : '#ffffff';
-  const border = isDark ? '#1e3050' : '#dde8f5';
-  const inputBg = isDark ? '#0d1a2e' : '#f5f9ff';
-  const textPrimary = isDark ? '#e8f0fe' : '#0d1b2a';
-  const textSecondary = isDark ? '#6b8aaa' : '#5a7a9a';
-
+function ListaLancamentos({ itens, cores }: { itens: typeof MOCK_HISTORICO; cores: Temacores }) {
   if (itens.length === 0) {
     return (
       <View style={styles.vazio}>
-        <Text style={[styles.vazioTexto, { color: textSecondary }]}>Nenhum registro ainda</Text>
+        <Text style={[styles.vazioTexto, { color: cores.textSecundario }]}>Nenhum registro ainda</Text>
       </View>
     );
   }
@@ -40,20 +36,20 @@ function ListaLancamentos({ itens, isDark }: { itens: typeof MOCK_HISTORICO; isD
     <>
       {itens.map((item, index) => (
         <View key={item.id}>
-          {index > 0 && <View style={[styles.separador, { backgroundColor: border }]} />}
+          {index > 0 && <View style={[styles.separador, { backgroundColor: cores.border }]} />}
           <View style={styles.lancamentoRow}>
-            <View style={[styles.emojiContainer, { backgroundColor: inputBg }]}>
+            <View style={[styles.emojiContainer, { backgroundColor: cores.inputBg }]}>
               <Text style={styles.emoji}>{item.emoji}</Text>
             </View>
             <View style={styles.lancamentoInfo}>
-              <Text style={[styles.lancamentoNome, { color: textPrimary }]}>{item.descricao}</Text>
+              <Text style={[styles.lancamentoNome, { color: cores.textPrimario }]}>{item.descricao}</Text>
               <View style={styles.lancamentoMeta}>
-                <Text style={[styles.lancamentoCategoria, { color: textSecondary }]}>{item.categoria}</Text>
-                <Text style={[styles.ponto, { color: textSecondary }]}>·</Text>
-                <Text style={[styles.lancamentoData, { color: textSecondary }]}>{item.data}</Text>
+                <Text style={[styles.lancamentoCategoria, { color: cores.textSecundario }]}>{item.categoria}</Text>
+                <Text style={[styles.ponto, { color: cores.textSecundario }]}>·</Text>
+                <Text style={[styles.lancamentoData, { color: cores.textSecundario }]}>{item.data}</Text>
               </View>
             </View>
-            <Text style={[styles.lancamentoValor, { color: textPrimary }]}>
+            <Text style={[styles.lancamentoValor, { color: cores.textPrimario }]}>
               - R$ {item.valor.toFixed(2).replace('.', ',')}
             </Text>
           </View>
@@ -65,12 +61,7 @@ function ListaLancamentos({ itens, isDark }: { itens: typeof MOCK_HISTORICO; isD
 
 export default function HistoricoScreen() {
   const { isDark } = useTema();
-
-  const bg = isDark ? '#0a1628' : '#eef4ff';
-  const card = isDark ? '#111f35' : '#ffffff';
-  const border = isDark ? '#1e3050' : '#dde8f5';
-  const textPrimary = isDark ? '#e8f0fe' : '#0d1b2a';
-  const textSecondary = isDark ? '#6b8aaa' : '#5a7a9a';
+  const cores = useCores();
 
   const despesas = MOCK_HISTORICO.filter(i => i.tipo === 'despesa');
   const assinaturas = MOCK_HISTORICO.filter(i => i.tipo === 'assinatura');
@@ -78,29 +69,25 @@ export default function HistoricoScreen() {
   const totalAssinaturas = assinaturas.reduce((acc, i) => acc + i.valor, 0);
 
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: bg }]}>
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={bg} />
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={[styles.titulo, { color: textPrimary }]}>Histórico</Text>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.bg }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={cores.bg} />
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <Text style={[styles.titulo, { color: cores.textPrimario }]}>Histórico</Text>
 
-        {/* Resumo */}
-        <View style={[styles.cardResumo, { backgroundColor: '#1560A8' }]}>
+        <View style={[styles.cardResumo, { backgroundColor: CoresFixas.azul }]}>
           <Text style={styles.resumoLabel}>Total em setembro</Text>
           <Text style={styles.resumoValor}>
             R$ {(totalDespesas + totalAssinaturas).toFixed(2).replace('.', ',')}
           </Text>
           <View style={styles.resumoRow}>
             <View style={styles.resumoItem}>
-              <Ionicons name="cart-outline" size={14} color="rgba(255,255,255,0.7)" />
+              <Ionicons name="cart-outline" size={14} color={CoresFixas.cardPrincipalLabel} />
               <Text style={styles.resumoItemTexto}>
                 R$ {totalDespesas.toFixed(2).replace('.', ',')} em despesas
               </Text>
             </View>
             <View style={styles.resumoItem}>
-              <Ionicons name="repeat-outline" size={14} color="rgba(255,255,255,0.7)" />
+              <Ionicons name="repeat-outline" size={14} color={CoresFixas.cardPrincipalLabel} />
               <Text style={styles.resumoItemTexto}>
                 R$ {totalAssinaturas.toFixed(2).replace('.', ',')} em assinaturas
               </Text>
@@ -108,36 +95,34 @@ export default function HistoricoScreen() {
           </View>
         </View>
 
-        {/* Card despesas */}
-        <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
           <View style={styles.cardTopo}>
             <View style={styles.cardTopoEsquerda}>
-              <Ionicons name="cart-outline" size={18} color="#ff6b6b" />
-              <Text style={[styles.cardTitulo, { color: textPrimary }]}>Despesas</Text>
+              <Ionicons name="cart-outline" size={18} color={CoresFixas.erro} />
+              <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Despesas</Text>
             </View>
             <View style={[styles.badge, { backgroundColor: 'rgba(255,107,107,0.15)' }]}>
-              <Text style={[styles.badgeTexto, { color: '#ff6b6b' }]}>
+              <Text style={[styles.badgeTexto, { color: CoresFixas.erro }]}>
                 R$ {totalDespesas.toFixed(2).replace('.', ',')}
               </Text>
             </View>
           </View>
-          <ListaLancamentos itens={despesas} isDark={isDark} />
+          <ListaLancamentos itens={despesas} cores={cores} />
         </View>
 
-        {/* Card assinaturas */}
-        <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
           <View style={styles.cardTopo}>
             <View style={styles.cardTopoEsquerda}>
-              <Ionicons name="repeat-outline" size={18} color="#2E9EFF" />
-              <Text style={[styles.cardTitulo, { color: textPrimary }]}>Assinaturas</Text>
+              <Ionicons name="repeat-outline" size={18} color={CoresFixas.azulClaro} />
+              <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Assinaturas</Text>
             </View>
             <View style={[styles.badge, { backgroundColor: 'rgba(46,158,255,0.15)' }]}>
-              <Text style={[styles.badgeTexto, { color: '#2E9EFF' }]}>
+              <Text style={[styles.badgeTexto, { color: CoresFixas.azulClaro }]}>
                 R$ {totalAssinaturas.toFixed(2).replace('.', ',')}
               </Text>
             </View>
           </View>
-          <ListaLancamentos itens={assinaturas} isDark={isDark} />
+          <ListaLancamentos itens={assinaturas} cores={cores} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -161,11 +146,11 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   resumoLabel: {
-    color: 'rgba(255,255,255,0.7)',
+    color: CoresFixas.cardPrincipalLabel,
     fontSize: 13,
   },
   resumoValor: {
-    color: '#fff',
+    color: CoresFixas.branco,
     fontSize: 32,
     fontWeight: '800',
   },
@@ -179,7 +164,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   resumoItemTexto: {
-    color: 'rgba(255,255,255,0.7)',
+    color: CoresFixas.cardPrincipalLabel,
     fontSize: 12,
   },
   card: {

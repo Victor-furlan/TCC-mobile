@@ -9,16 +9,18 @@ import {
   Platform,
   ActivityIndicator,
   Image,
-  useColorScheme,
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTema } from '@/contexts/temaContexto';
+import { useCores } from '@/constants/useCores';
+import { CoresFixas } from '@/constants/cores';
 
 export default function EsqueciSenhaScreen() {
   const router = useRouter();
   const { isDark } = useTema();
+  const cores = useCores();
 
   const [email, setEmail] = useState('');
   const [carregando, setCarregando] = useState(false);
@@ -42,47 +44,40 @@ export default function EsqueciSenhaScreen() {
     }, 1000);
   }
 
-  const bg = isDark ? '#0a1628' : '#eef4ff';
-  const card = isDark ? '#111f35' : '#ffffff';
-  const border = isDark ? '#1e3050' : '#dde8f5';
-  const inputBg = isDark ? '#0d1a2e' : '#f5f9ff';
-  const textPrimary = isDark ? '#e8f0fe' : '#0d1b2a';
-  const textSecondary = isDark ? '#6b8aaa' : '#5a7a9a';
-
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: bg }]} edges={['bottom']}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.bg }]} edges={['bottom']}>
       <StatusBar
         barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={bg}
+        backgroundColor={cores.bg}
       />
       <KeyboardAvoidingView
-        style={[styles.container, { backgroundColor: bg }]}
+        style={[styles.container, { backgroundColor: cores.bg }]}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={styles.inner}>
           <View style={styles.header}>
             <Image source={logo} style={styles.logo} resizeMode="contain" />
-            <Text style={[styles.subtitulo, { color: textSecondary }]}>
+            <Text style={[styles.subtitulo, { color: cores.textSecundario }]}>
               DO GASTO AO SIGNIFICADO
             </Text>
           </View>
 
-          <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
+          <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
             {!enviado ? (
               <>
                 <View style={styles.cardHeader}>
-                  <Text style={[styles.cardTitulo, { color: textPrimary }]}>Esqueci minha senha</Text>
-                  <Text style={[styles.cardDescricao, { color: textSecondary }]}>
+                  <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Esqueci minha senha</Text>
+                  <Text style={[styles.cardDescricao, { color: cores.textSecundario }]}>
                     Digite seu e-mail e enviaremos um link para redefinir sua senha.
                   </Text>
                 </View>
 
                 <View style={styles.campo}>
-                  <Text style={[styles.label, { color: textSecondary }]}>E-mail</Text>
+                  <Text style={[styles.label, { color: cores.textSecundario }]}>E-mail</Text>
                   <TextInput
-                    style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+                    style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
                     placeholder="seu@email.com"
-                    placeholderTextColor={textSecondary}
+                    placeholderTextColor={cores.textSecundario}
                     keyboardType="email-address"
                     autoCapitalize="none"
                     value={email}
@@ -99,7 +94,7 @@ export default function EsqueciSenhaScreen() {
                   activeOpacity={0.85}
                 >
                   {carregando
-                    ? <ActivityIndicator color="#fff" />
+                    ? <ActivityIndicator color={CoresFixas.branco} />
                     : <Text style={styles.botaoTexto}>Enviar link</Text>
                   }
                 </TouchableOpacity>
@@ -107,8 +102,8 @@ export default function EsqueciSenhaScreen() {
             ) : (
               <View style={styles.sucessoContainer}>
                 <Text style={styles.sucessoIcone}>✉️</Text>
-                <Text style={[styles.sucessoTitulo, { color: textPrimary }]}>E-mail enviado!</Text>
-                <Text style={[styles.sucessoTexto, { color: textSecondary }]}>
+                <Text style={[styles.sucessoTitulo, { color: cores.textPrimario }]}>E-mail enviado!</Text>
+                <Text style={[styles.sucessoTexto, { color: cores.textSecundario }]}>
                   Verifique sua caixa de entrada e clique no link para redefinir sua senha.
                 </Text>
               </View>
@@ -125,9 +120,6 @@ export default function EsqueciSenhaScreen() {
     </SafeAreaView>
   );
 }
-
-const AZUL = '#1560A8';
-const AZUL_CLARO = '#2E9EFF';
 
 const styles = StyleSheet.create({
   safe: {
@@ -190,17 +182,17 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   erro: {
-    color: '#ff6b6b',
+    color: CoresFixas.erro,
     fontSize: 12,
     marginTop: -4,
   },
   botao: {
-    backgroundColor: AZUL,
+    backgroundColor: CoresFixas.azul,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
     marginTop: 4,
-    shadowColor: AZUL,
+    shadowColor: CoresFixas.azul,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
@@ -210,7 +202,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   botaoTexto: {
-    color: '#fff',
+    color: CoresFixas.branco,
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.3,
@@ -233,7 +225,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   link: {
-    color: AZUL_CLARO,
+    color: CoresFixas.azulClaro,
     fontSize: 14,
     fontWeight: '600',
   },

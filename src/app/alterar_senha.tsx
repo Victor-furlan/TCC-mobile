@@ -13,10 +13,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTema } from '@/contexts/temaContexto';
+import { useCores } from '@/constants/useCores';
+import { CoresFixas } from '@/constants/cores';
 
 export default function AlternarSenhaScreen() {
   const router = useRouter();
   const { isDark } = useTema();
+  const cores = useCores();
 
   const [senhaAtual, setSenhaAtual] = useState('');
   const [novaSenha, setNovaSenha] = useState('');
@@ -24,13 +27,6 @@ export default function AlternarSenhaScreen() {
   const [carregando, setCarregando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
   const [erro, setErro] = useState('');
-
-  const bg = isDark ? '#0a1628' : '#eef4ff';
-  const card = isDark ? '#111f35' : '#ffffff';
-  const border = isDark ? '#1e3050' : '#dde8f5';
-  const inputBg = isDark ? '#0d1a2e' : '#f5f9ff';
-  const textPrimary = isDark ? '#e8f0fe' : '#0d1b2a';
-  const textSecondary = isDark ? '#6b8aaa' : '#5a7a9a';
 
   function handleSalvar() {
     if (!senhaAtual || !novaSenha || !confirmarSenha) {
@@ -55,28 +51,27 @@ export default function AlternarSenhaScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: bg }]}>
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={bg} />
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.bg }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={cores.bg} />
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7} style={styles.botaoVoltar}>
-            <Ionicons name="arrow-back" size={22} color={textPrimary} />
+            <Ionicons name="arrow-back" size={22} color={cores.textPrimario} />
           </TouchableOpacity>
-          <Text style={[styles.titulo, { color: textPrimary }]}>Alterar senha</Text>
+          <Text style={[styles.titulo, { color: cores.textPrimario }]}>Alterar senha</Text>
         </View>
 
-        <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
           <View style={styles.campo}>
-            <Text style={[styles.label, { color: textSecondary }]}>Senha atual</Text>
+            <Text style={[styles.label, { color: cores.textSecundario }]}>Senha atual</Text>
             <TextInput
-              style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+              style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
               placeholder="••••••••"
-              placeholderTextColor={textSecondary}
+              placeholderTextColor={cores.textSecundario}
               secureTextEntry
               value={senhaAtual}
               onChangeText={text => { setSenhaAtual(text); setErro(''); }}
@@ -84,11 +79,11 @@ export default function AlternarSenhaScreen() {
           </View>
 
           <View style={styles.campo}>
-            <Text style={[styles.label, { color: textSecondary }]}>Nova senha</Text>
+            <Text style={[styles.label, { color: cores.textSecundario }]}>Nova senha</Text>
             <TextInput
-              style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+              style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
               placeholder="Mínimo 6 caracteres"
-              placeholderTextColor={textSecondary}
+              placeholderTextColor={cores.textSecundario}
               secureTextEntry
               value={novaSenha}
               onChangeText={text => { setNovaSenha(text); setErro(''); }}
@@ -96,11 +91,11 @@ export default function AlternarSenhaScreen() {
           </View>
 
           <View style={styles.campo}>
-            <Text style={[styles.label, { color: textSecondary }]}>Confirmar nova senha</Text>
+            <Text style={[styles.label, { color: cores.textSecundario }]}>Confirmar nova senha</Text>
             <TextInput
-              style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+              style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
               placeholder="Repita a nova senha"
-              placeholderTextColor={textSecondary}
+              placeholderTextColor={cores.textSecundario}
               secureTextEntry
               value={confirmarSenha}
               onChangeText={text => { setConfirmarSenha(text); setErro(''); }}
@@ -120,10 +115,10 @@ export default function AlternarSenhaScreen() {
             activeOpacity={0.85}
           >
             {carregando ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={CoresFixas.branco} />
             ) : sucesso ? (
               <>
-                <Ionicons name="checkmark-outline" size={20} color="#fff" />
+                <Ionicons name="checkmark-outline" size={20} color={CoresFixas.branco} />
                 <Text style={styles.botaoTexto}>Alterada!</Text>
               </>
             ) : (
@@ -135,8 +130,6 @@ export default function AlternarSenhaScreen() {
     </SafeAreaView>
   );
 }
-
-const AZUL = '#1560A8';
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
@@ -179,11 +172,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   erro: {
-    color: '#ff6b6b',
+    color: CoresFixas.erro,
     fontSize: 12,
   },
   botao: {
-    backgroundColor: AZUL,
+    backgroundColor: CoresFixas.azul,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
@@ -191,7 +184,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     marginTop: 4,
-    shadowColor: AZUL,
+    shadowColor: CoresFixas.azul,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
@@ -204,7 +197,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2ecc71',
   },
   botaoTexto: {
-    color: '#fff',
+    color: CoresFixas.branco,
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.3,

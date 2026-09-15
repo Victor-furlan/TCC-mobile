@@ -3,14 +3,13 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  useColorScheme,
   StatusBar,
-  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import { useTema } from '@/contexts/temaContexto';
+import { useCores } from '@/constants/useCores';
+import { CoresFixas } from '@/constants/cores';
 
 const MOCK = {
   nome: 'Victor',
@@ -27,40 +26,30 @@ const MOCK = {
 };
 
 export default function DashboardScreen() {
-  const router = useRouter();
   const { isDark } = useTema();
-
-  const bg = isDark ? '#0a1628' : '#eef4ff';
-  const card = isDark ? '#111f35' : '#ffffff';
-  const border = isDark ? '#1e3050' : '#dde8f5';
-  const textPrimary = isDark ? '#e8f0fe' : '#0d1b2a';
-  const textSecondary = isDark ? '#6b8aaa' : '#5a7a9a';
+  const cores = useCores();
 
   const percentual = Math.round((MOCK.totalGasto / MOCK.renda) * 100);
 
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: bg }]}>
-      <StatusBar
-        barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={bg}
-      />
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.bg }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={cores.bg} />
       <ScrollView
-        style={{ backgroundColor: bg }}
+        style={{ backgroundColor: cores.bg }}
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
-
         <View style={styles.topo}>
           <View>
-            <Text style={[styles.saudacao, { color: textSecondary }]}>Olá,</Text>
-            <Text style={[styles.nome, { color: textPrimary }]}>{MOCK.nome} 👋</Text>
+            <Text style={[styles.saudacao, { color: cores.textSecundario }]}>Olá,</Text>
+            <Text style={[styles.nome, { color: cores.textPrimario }]}>{MOCK.nome} 👋</Text>
           </View>
-          <View style={[styles.mesTag, { backgroundColor: card, borderColor: border }]}>
-            <Text style={[styles.mesTexto, { color: textSecondary }]}>Setembro 2026</Text>
+          <View style={[styles.mesTag, { backgroundColor: cores.card, borderColor: cores.border }]}>
+            <Text style={[styles.mesTexto, { color: cores.textSecundario }]}>Setembro 2026</Text>
           </View>
         </View>
 
-        <View style={[styles.cardPrincipal, { backgroundColor: '#1560A8' }]}>
+        <View style={[styles.cardPrincipal, { backgroundColor: CoresFixas.azul }]}>
           <Text style={styles.cardPrincipalLabel}>Total gasto no mês</Text>
           <Text style={styles.cardPrincipalValor}>
             R$ {MOCK.totalGasto.toFixed(2).replace('.', ',')}
@@ -74,52 +63,52 @@ export default function DashboardScreen() {
         </View>
 
         <View style={styles.linha}>
-          <View style={[styles.cardSecundario, { backgroundColor: card, borderColor: border }]}>
-            <Ionicons name="repeat-outline" size={20} color="#2E9EFF" />
-            <Text style={[styles.cardSecLabel, { color: textSecondary }]}>Assinaturas</Text>
-            <Text style={[styles.cardSecValor, { color: textPrimary }]}>
+          <View style={[styles.cardSecundario, { backgroundColor: cores.card, borderColor: cores.border }]}>
+            <Ionicons name="repeat-outline" size={20} color={CoresFixas.azulClaro} />
+            <Text style={[styles.cardSecLabel, { color: cores.textSecundario }]}>Assinaturas</Text>
+            <Text style={[styles.cardSecValor, { color: cores.textPrimario }]}>
               R$ {MOCK.totalAssinaturas.toFixed(2).replace('.', ',')}
             </Text>
           </View>
-          <View style={[styles.cardSecundario, { backgroundColor: card, borderColor: border }]}>
-            <Ionicons name="cart-outline" size={20} color="#2E9EFF" />
-            <Text style={[styles.cardSecLabel, { color: textSecondary }]}>Despesas</Text>
-            <Text style={[styles.cardSecValor, { color: textPrimary }]}>
+          <View style={[styles.cardSecundario, { backgroundColor: cores.card, borderColor: cores.border }]}>
+            <Ionicons name="cart-outline" size={20} color={CoresFixas.azulClaro} />
+            <Text style={[styles.cardSecLabel, { color: cores.textSecundario }]}>Despesas</Text>
+            <Text style={[styles.cardSecValor, { color: cores.textPrimario }]}>
               R$ {MOCK.totalDespesas.toFixed(2).replace('.', ',')}
             </Text>
           </View>
         </View>
 
-        <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
           <View style={styles.cardTopo}>
-            <Text style={[styles.cardTitulo, { color: textPrimary }]}>Próxima renovação</Text>
-            <Ionicons name="time-outline" size={18} color={textSecondary} />
+            <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Próxima renovação</Text>
+            <Ionicons name="time-outline" size={18} color={cores.textSecundario} />
           </View>
           <View style={styles.renovacaoRow}>
-            <Text style={[styles.renovacaoNome, { color: textPrimary }]}>
+            <Text style={[styles.renovacaoNome, { color: cores.textPrimario }]}>
               {MOCK.proximaRenovacao.nome}
             </Text>
-            <Text style={[styles.renovacaoDias, { color: '#2E9EFF' }]}>
+            <Text style={[styles.renovacaoDias, { color: CoresFixas.azulClaro }]}>
               em {MOCK.proximaRenovacao.dias} dias
             </Text>
-            <Text style={[styles.renovacaoValor, { color: textSecondary }]}>
+            <Text style={[styles.renovacaoValor, { color: cores.textSecundario }]}>
               R$ {MOCK.proximaRenovacao.valor.toFixed(2).replace('.', ',')}
             </Text>
           </View>
         </View>
 
-        <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
           <View style={styles.cardTopo}>
-            <Text style={[styles.cardTitulo, { color: textPrimary }]}>Últimos lançamentos</Text>
+            <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Últimos lançamentos</Text>
           </View>
           {MOCK.ultimosLancamentos.map(item => (
-            <View key={item.id} style={[styles.lancamentoRow, { borderTopColor: border }]}>
+            <View key={item.id} style={[styles.lancamentoRow, { borderTopColor: cores.border }]}>
               <Text style={styles.lancamentoEmoji}>{item.emoji}</Text>
               <View style={styles.lancamentoInfo}>
-                <Text style={[styles.lancamentoNome, { color: textPrimary }]}>{item.descricao}</Text>
-                <Text style={[styles.lancamentoData, { color: textSecondary }]}>{item.data}</Text>
+                <Text style={[styles.lancamentoNome, { color: cores.textPrimario }]}>{item.descricao}</Text>
+                <Text style={[styles.lancamentoData, { color: cores.textSecundario }]}>{item.data}</Text>
               </View>
-              <Text style={[styles.lancamentoValor, { color: textPrimary }]}>
+              <Text style={[styles.lancamentoValor, { color: cores.textPrimario }]}>
                 - R$ {item.valor.toFixed(2).replace('.', ',')}
               </Text>
             </View>
@@ -138,16 +127,6 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 16,
     paddingBottom: 32,
-  },
-  botaoSair: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-end',
-    gap: 4,
-    paddingVertical: 4,
-  },
-  botaoSairTexto: {
-    fontSize: 13,
   },
   topo: {
     flexDirection: 'row',
@@ -177,28 +156,28 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   cardPrincipalLabel: {
-    color: 'rgba(255,255,255,0.7)',
+    color: CoresFixas.cardPrincipalLabel,
     fontSize: 13,
   },
   cardPrincipalValor: {
-    color: '#fff',
+    color: CoresFixas.branco,
     fontSize: 32,
     fontWeight: '800',
   },
   barraContainer: {
     height: 6,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: CoresFixas.barraFundo,
     borderRadius: 3,
     overflow: 'hidden',
     marginTop: 4,
   },
   barra: {
     height: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: CoresFixas.branco,
     borderRadius: 3,
   },
   cardPrincipalSub: {
-    color: 'rgba(255,255,255,0.7)',
+    color: CoresFixas.cardPrincipalLabel,
     fontSize: 12,
   },
   linha: {

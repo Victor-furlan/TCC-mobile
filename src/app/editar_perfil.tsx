@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  useColorScheme,
   StatusBar,
   ActivityIndicator,
 } from 'react-native';
@@ -14,6 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTema } from '@/contexts/temaContexto';
+import { useCores } from '@/constants/useCores';
+import { CoresFixas } from '@/constants/cores';
 
 const MOCK_USUARIO = {
   nome: 'Victor Furlan',
@@ -23,19 +24,13 @@ const MOCK_USUARIO = {
 export default function EditarPerfilScreen() {
   const router = useRouter();
   const { isDark } = useTema();
+  const cores = useCores();
 
   const [nome, setNome] = useState(MOCK_USUARIO.nome);
   const [email, setEmail] = useState(MOCK_USUARIO.email);
   const [carregando, setCarregando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
   const [erro, setErro] = useState('');
-
-  const bg = isDark ? '#0a1628' : '#eef4ff';
-  const card = isDark ? '#111f35' : '#ffffff';
-  const border = isDark ? '#1e3050' : '#dde8f5';
-  const inputBg = isDark ? '#0d1a2e' : '#f5f9ff';
-  const textPrimary = isDark ? '#e8f0fe' : '#0d1b2a';
-  const textSecondary = isDark ? '#6b8aaa' : '#5a7a9a';
 
   function handleSalvar() {
     if (!nome || !email) {
@@ -52,28 +47,27 @@ export default function EditarPerfilScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: bg }]}>
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={bg} />
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.bg }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={cores.bg} />
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7} style={styles.botaoVoltar}>
-            <Ionicons name="arrow-back" size={22} color={textPrimary} />
+            <Ionicons name="arrow-back" size={22} color={cores.textPrimario} />
           </TouchableOpacity>
-          <Text style={[styles.titulo, { color: textPrimary }]}>Editar perfil</Text>
+          <Text style={[styles.titulo, { color: cores.textPrimario }]}>Editar perfil</Text>
         </View>
 
-        <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
           <View style={styles.campo}>
-            <Text style={[styles.label, { color: textSecondary }]}>Nome</Text>
+            <Text style={[styles.label, { color: cores.textSecundario }]}>Nome</Text>
             <TextInput
-              style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+              style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
               placeholder="Seu nome completo"
-              placeholderTextColor={textSecondary}
+              placeholderTextColor={cores.textSecundario}
               autoCapitalize="words"
               value={nome}
               onChangeText={text => { setNome(text); setErro(''); }}
@@ -81,11 +75,11 @@ export default function EditarPerfilScreen() {
           </View>
 
           <View style={styles.campo}>
-            <Text style={[styles.label, { color: textSecondary }]}>E-mail</Text>
+            <Text style={[styles.label, { color: cores.textSecundario }]}>E-mail</Text>
             <TextInput
-              style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+              style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
               placeholder="seu@email.com"
-              placeholderTextColor={textSecondary}
+              placeholderTextColor={cores.textSecundario}
               keyboardType="email-address"
               autoCapitalize="none"
               value={email}
@@ -106,10 +100,10 @@ export default function EditarPerfilScreen() {
             activeOpacity={0.85}
           >
             {carregando ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={CoresFixas.branco} />
             ) : sucesso ? (
               <>
-                <Ionicons name="checkmark-outline" size={20} color="#fff" />
+                <Ionicons name="checkmark-outline" size={20} color={CoresFixas.branco} />
                 <Text style={styles.botaoTexto}>Salvo!</Text>
               </>
             ) : (
@@ -121,8 +115,6 @@ export default function EditarPerfilScreen() {
     </SafeAreaView>
   );
 }
-
-const AZUL = '#1560A8';
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
@@ -165,11 +157,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   erro: {
-    color: '#ff6b6b',
+    color: CoresFixas.erro,
     fontSize: 12,
   },
   botao: {
-    backgroundColor: AZUL,
+    backgroundColor: CoresFixas.azul,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
@@ -177,7 +169,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     marginTop: 4,
-    shadowColor: AZUL,
+    shadowColor: CoresFixas.azul,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
@@ -190,7 +182,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2ecc71',
   },
   botaoTexto: {
-    color: '#fff',
+    color: CoresFixas.branco,
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.3,

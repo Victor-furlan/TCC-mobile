@@ -6,13 +6,14 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  useColorScheme,
   StatusBar,
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTema } from '@/contexts/temaContexto';
+import { useCores } from '@/constants/useCores';
+import { CoresFixas } from '@/constants/cores';
 
 const CATEGORIAS = [
   { id: 'entretenimento', label: 'Entretenimento', icone: 'film-outline' },
@@ -38,7 +39,7 @@ const PERIODICIDADES = [
   { id: 'semanal', label: 'Semanal' },
 ];
 
-function Estrelas({ valor, onChange, textSecondary }: { valor: number; onChange: (v: number) => void; textSecondary: string }) {
+function Estrelas({ valor, onChange, textSecundario }: { valor: number; onChange: (v: number) => void; textSecundario: string }) {
   return (
     <View style={styles.estrelasRow}>
       {[1, 2, 3, 4, 5].map(i => (
@@ -46,13 +47,13 @@ function Estrelas({ valor, onChange, textSecondary }: { valor: number; onChange:
           <Ionicons
             name={i <= valor ? 'star' : 'star-outline'}
             size={28}
-            color={i <= valor ? '#f5a623' : textSecondary}
+            color={i <= valor ? '#f5a623' : textSecundario}
           />
         </TouchableOpacity>
       ))}
       {valor > 0 && (
         <TouchableOpacity onPress={() => onChange(0)} activeOpacity={0.7}>
-          <Text style={[styles.limparTexto, { color: textSecondary }]}>Limpar</Text>
+          <Text style={[styles.limparTexto, { color: textSecundario }]}>Limpar</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -61,33 +62,21 @@ function Estrelas({ valor, onChange, textSecondary }: { valor: number; onChange:
 
 export default function RegistrarScreen() {
   const { isDark } = useTema();
+  const cores = useCores();
 
   const [tipo, setTipo] = useState<'despesa' | 'assinatura'>('despesa');
 
-  // Campos comuns
   const [descricao, setDescricao] = useState('');
   const [valor, setValor] = useState('');
   const [categoria, setCategoria] = useState('');
   const [humor, setHumor] = useState('');
   const [motivo, setMotivo] = useState('');
   const [arrependimento, setArrependimento] = useState(0);
-
-  // Campos despesa
   const [data, setData] = useState('');
-
-  // Campos assinatura
   const [periodicidade, setPeriodicidade] = useState('');
   const [proximaCobranca, setProximaCobranca] = useState('');
-
   const [carregando, setCarregando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
-
-  const bg = isDark ? '#0a1628' : '#eef4ff';
-  const card = isDark ? '#111f35' : '#ffffff';
-  const border = isDark ? '#1e3050' : '#dde8f5';
-  const inputBg = isDark ? '#0d1a2e' : '#f5f9ff';
-  const textPrimary = isDark ? '#e8f0fe' : '#0d1b2a';
-  const textSecondary = isDark ? '#6b8aaa' : '#5a7a9a';
 
   function limparCampos() {
     setDescricao('');
@@ -118,52 +107,50 @@ export default function RegistrarScreen() {
     (tipo === 'despesa' || (tipo === 'assinatura' && periodicidade));
 
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: bg }]}>
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={bg} />
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.bg }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={cores.bg} />
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={[styles.titulo, { color: textPrimary }]}>Registrar</Text>
+        <Text style={[styles.titulo, { color: cores.textPrimario }]}>Registrar</Text>
 
-        {/* Tipo */}
-        <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
-          <Text style={[styles.cardTitulo, { color: textPrimary }]}>Tipo</Text>
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
+          <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Tipo</Text>
           <View style={styles.tipoRow}>
             <TouchableOpacity
-              style={[styles.tipoBotao, tipo === 'despesa' && styles.tipoAtivo, { borderColor: border }]}
+              style={[styles.tipoBotao, tipo === 'despesa' && styles.tipoAtivo, { borderColor: cores.border }]}
               onPress={() => { setTipo('despesa'); limparCampos(); }}
               activeOpacity={0.8}
             >
-              <Ionicons name="cart-outline" size={18} color={tipo === 'despesa' ? '#fff' : textSecondary} />
-              <Text style={[styles.tipoTexto, { color: tipo === 'despesa' ? '#fff' : textSecondary }]}>
+              <Ionicons name="cart-outline" size={18} color={tipo === 'despesa' ? CoresFixas.branco : cores.textSecundario} />
+              <Text style={[styles.tipoTexto, { color: tipo === 'despesa' ? CoresFixas.branco : cores.textSecundario }]}>
                 Despesa
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.tipoBotao, tipo === 'assinatura' && styles.tipoAtivo, { borderColor: border }]}
+              style={[styles.tipoBotao, tipo === 'assinatura' && styles.tipoAtivo, { borderColor: cores.border }]}
               onPress={() => { setTipo('assinatura'); limparCampos(); }}
               activeOpacity={0.8}
             >
-              <Ionicons name="repeat-outline" size={18} color={tipo === 'assinatura' ? '#fff' : textSecondary} />
-              <Text style={[styles.tipoTexto, { color: tipo === 'assinatura' ? '#fff' : textSecondary }]}>
+              <Ionicons name="repeat-outline" size={18} color={tipo === 'assinatura' ? CoresFixas.branco : cores.textSecundario} />
+              <Text style={[styles.tipoTexto, { color: tipo === 'assinatura' ? CoresFixas.branco : cores.textSecundario }]}>
                 Assinatura
               </Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Detalhes */}
-        <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
-          <Text style={[styles.cardTitulo, { color: textPrimary }]}>Detalhes</Text>
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
+          <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Detalhes</Text>
 
           <View style={styles.campo}>
-            <Text style={[styles.label, { color: textSecondary }]}>Nome</Text>
+            <Text style={[styles.label, { color: cores.textSecundario }]}>Nome</Text>
             <TextInput
-              style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+              style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
               placeholder={tipo === 'despesa' ? 'Ex: iFood, Uber...' : 'Ex: Netflix, Spotify...'}
-              placeholderTextColor={textSecondary}
+              placeholderTextColor={cores.textSecundario}
               value={descricao}
               onChangeText={setDescricao}
             />
@@ -172,22 +159,22 @@ export default function RegistrarScreen() {
           {tipo === 'despesa' ? (
             <View style={styles.linha}>
               <View style={[styles.campo, { flex: 1 }]}>
-                <Text style={[styles.label, { color: textSecondary }]}>Data</Text>
+                <Text style={[styles.label, { color: cores.textSecundario }]}>Data</Text>
                 <TextInput
-                  style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+                  style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
                   placeholder="DD/MM/AAAA"
-                  placeholderTextColor={textSecondary}
+                  placeholderTextColor={cores.textSecundario}
                   keyboardType="numeric"
                   value={data}
                   onChangeText={setData}
                 />
               </View>
               <View style={[styles.campo, { flex: 1 }]}>
-                <Text style={[styles.label, { color: textSecondary }]}>Valor (R$)</Text>
+                <Text style={[styles.label, { color: cores.textSecundario }]}>Valor (R$)</Text>
                 <TextInput
-                  style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+                  style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
                   placeholder="0,00"
-                  placeholderTextColor={textSecondary}
+                  placeholderTextColor={cores.textSecundario}
                   keyboardType="numeric"
                   value={valor}
                   onChangeText={setValor}
@@ -198,22 +185,22 @@ export default function RegistrarScreen() {
             <>
               <View style={styles.linha}>
                 <View style={[styles.campo, { flex: 1 }]}>
-                  <Text style={[styles.label, { color: textSecondary }]}>Valor (R$)</Text>
+                  <Text style={[styles.label, { color: cores.textSecundario }]}>Valor (R$)</Text>
                   <TextInput
-                    style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+                    style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
                     placeholder="0,00"
-                    placeholderTextColor={textSecondary}
+                    placeholderTextColor={cores.textSecundario}
                     keyboardType="numeric"
                     value={valor}
                     onChangeText={setValor}
                   />
                 </View>
                 <View style={[styles.campo, { flex: 1 }]}>
-                  <Text style={[styles.label, { color: textSecondary }]}>Próxima cobrança</Text>
+                  <Text style={[styles.label, { color: cores.textSecundario }]}>Próxima cobrança</Text>
                   <TextInput
-                    style={[styles.input, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+                    style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
                     placeholder="DD/MM/AAAA"
-                    placeholderTextColor={textSecondary}
+                    placeholderTextColor={cores.textSecundario}
                     keyboardType="numeric"
                     value={proximaCobranca}
                     onChangeText={setProximaCobranca}
@@ -222,7 +209,7 @@ export default function RegistrarScreen() {
               </View>
 
               <View style={styles.campo}>
-                <Text style={[styles.label, { color: textSecondary }]}>Periodicidade</Text>
+                <Text style={[styles.label, { color: cores.textSecundario }]}>Periodicidade</Text>
                 <View style={styles.tipoRow}>
                   {PERIODICIDADES.map(p => (
                     <TouchableOpacity
@@ -230,12 +217,12 @@ export default function RegistrarScreen() {
                       style={[
                         styles.tipoBotao,
                         periodicidade === p.id && styles.tipoAtivo,
-                        { borderColor: border },
+                        { borderColor: cores.border },
                       ]}
                       onPress={() => setPeriodicidade(p.id)}
                       activeOpacity={0.8}
                     >
-                      <Text style={[styles.tipoTexto, { color: periodicidade === p.id ? '#fff' : textSecondary }]}>
+                      <Text style={[styles.tipoTexto, { color: periodicidade === p.id ? CoresFixas.branco : cores.textSecundario }]}>
                         {p.label}
                       </Text>
                     </TouchableOpacity>
@@ -246,16 +233,15 @@ export default function RegistrarScreen() {
           )}
         </View>
 
-        {/* Categoria */}
-        <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
-          <Text style={[styles.cardTitulo, { color: textPrimary }]}>Categoria</Text>
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
+          <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Categoria</Text>
           <View style={styles.categoriaGrid}>
             {CATEGORIAS.map(cat => (
               <TouchableOpacity
                 key={cat.id}
                 style={[
                   styles.categoriaItem,
-                  { backgroundColor: inputBg, borderColor: categoria === cat.id ? '#2E9EFF' : border },
+                  { backgroundColor: cores.inputBg, borderColor: categoria === cat.id ? CoresFixas.azulClaro : cores.border },
                 ]}
                 onPress={() => setCategoria(cat.id)}
                 activeOpacity={0.8}
@@ -263,9 +249,9 @@ export default function RegistrarScreen() {
                 <Ionicons
                   name={cat.icone as any}
                   size={22}
-                  color={categoria === cat.id ? '#2E9EFF' : textSecondary}
+                  color={categoria === cat.id ? CoresFixas.azulClaro : cores.textSecundario}
                 />
-                <Text style={[styles.categoriaLabel, { color: categoria === cat.id ? '#2E9EFF' : textSecondary }]}>
+                <Text style={[styles.categoriaLabel, { color: categoria === cat.id ? CoresFixas.azulClaro : cores.textSecundario }]}>
                   {cat.label}
                 </Text>
               </TouchableOpacity>
@@ -273,12 +259,11 @@ export default function RegistrarScreen() {
           </View>
         </View>
 
-        {/* Campos emocionais */}
-        <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
-          <Text style={[styles.cardTitulo, { color: textPrimary }]}>Campos Emocionais (Opcional)</Text>
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
+          <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Campos Emocionais (Opcional)</Text>
 
           <View style={styles.campo}>
-            <Text style={[styles.label, { color: textSecondary }]}>
+            <Text style={[styles.label, { color: cores.textSecundario }]}>
               {tipo === 'despesa' ? 'Como você estava se sentindo ao fazer essa despesa?' : 'Como você estava se sentindo ao assinar?'}
             </Text>
             <View style={styles.humorRow}>
@@ -287,13 +272,13 @@ export default function RegistrarScreen() {
                   key={h.id}
                   style={[
                     styles.humorItem,
-                    { borderColor: humor === h.id ? '#2E9EFF' : border, backgroundColor: inputBg },
+                    { borderColor: humor === h.id ? CoresFixas.azulClaro : cores.border, backgroundColor: cores.inputBg },
                   ]}
                   onPress={() => setHumor(humor === h.id ? '' : h.id)}
                   activeOpacity={0.8}
                 >
                   <Text style={styles.humorEmoji}>{h.emoji}</Text>
-                  <Text style={[styles.humorLabel, { color: humor === h.id ? '#2E9EFF' : textSecondary }]}>
+                  <Text style={[styles.humorLabel, { color: humor === h.id ? CoresFixas.azulClaro : cores.textSecundario }]}>
                     {h.label}
                   </Text>
                 </TouchableOpacity>
@@ -302,13 +287,13 @@ export default function RegistrarScreen() {
           </View>
 
           <View style={styles.campo}>
-            <Text style={[styles.label, { color: textSecondary }]}>
+            <Text style={[styles.label, { color: cores.textSecundario }]}>
               {tipo === 'despesa' ? 'Motivo da despesa' : 'Motivo da assinatura'}
             </Text>
             <TextInput
-              style={[styles.inputMultiline, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+              style={[styles.inputMultiline, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
               placeholder={tipo === 'despesa' ? 'Ex: Estava com fome, vi uma promoção...' : 'Ex: Preciso para trabalho, recomendação de amigo...'}
-              placeholderTextColor={textSecondary}
+              placeholderTextColor={cores.textSecundario}
               multiline
               numberOfLines={3}
               value={motivo}
@@ -317,12 +302,11 @@ export default function RegistrarScreen() {
           </View>
 
           <View style={styles.campo}>
-            <Text style={[styles.label, { color: textSecondary }]}>Nível de arrependimento</Text>
-            <Estrelas valor={arrependimento} onChange={setArrependimento} textSecondary={textSecondary} />
+            <Text style={[styles.label, { color: cores.textSecundario }]}>Nível de arrependimento</Text>
+            <Estrelas valor={arrependimento} onChange={setArrependimento} textSecundario={cores.textSecundario} />
           </View>
         </View>
 
-        {/* Botão salvar */}
         <TouchableOpacity
           style={[
             styles.botao,
@@ -334,10 +318,10 @@ export default function RegistrarScreen() {
           activeOpacity={0.85}
         >
           {carregando ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={CoresFixas.branco} />
           ) : sucesso ? (
             <>
-              <Ionicons name="checkmark-outline" size={20} color="#fff" />
+              <Ionicons name="checkmark-outline" size={20} color={CoresFixas.branco} />
               <Text style={styles.botaoTexto}>Salvo!</Text>
             </>
           ) : (
@@ -350,8 +334,6 @@ export default function RegistrarScreen() {
     </SafeAreaView>
   );
 }
-
-const AZUL = '#1560A8';
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
@@ -389,8 +371,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   tipoAtivo: {
-    backgroundColor: AZUL,
-    borderColor: AZUL,
+    backgroundColor: CoresFixas.azul,
+    borderColor: CoresFixas.azul,
   },
   tipoTexto: {
     fontSize: 14,
@@ -468,14 +450,14 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   botao: {
-    backgroundColor: AZUL,
+    backgroundColor: CoresFixas.azul,
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 8,
-    shadowColor: AZUL,
+    shadowColor: CoresFixas.azul,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
@@ -488,7 +470,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2ecc71',
   },
   botaoTexto: {
-    color: '#fff',
+    color: CoresFixas.branco,
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.3,
