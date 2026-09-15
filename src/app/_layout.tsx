@@ -20,7 +20,10 @@ function AppLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="criar_conta" />
         <Stack.Screen name="esqueci_minha_senha" />
+        <Stack.Screen name="sobre" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="editar_perfil" />
+        <Stack.Screen name="alterar_senha" />
       </Stack>
     </ThemeProvider>
   );

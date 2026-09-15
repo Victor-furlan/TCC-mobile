@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -6,9 +6,12 @@ import {
   ScrollView,
   StatusBar,
   TouchableOpacity,
+  TextInput,
+  Keyboard,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { useTema } from '@/contexts/temaContexto';
 
@@ -54,10 +57,23 @@ function ItemConfig({ icone, label, valor, cor, onPress, textPrimary, textSecond
 }
 
 export default function PerfilScreen() {
+
+  const router = useRouter();
+
   const { isDark, tema, setTema } = useTema();
 
-  // Bottom sheet de seleção de tema (claro, escuro ou sistema)
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  // Bottom sheet de seleção de tema
+  const bottomSheetTemaRef = useRef<BottomSheet>(null);
+
+  // Bottom sheet de edição de renda mensal
+  const bottomSheetRendaRef = useRef<BottomSheet>(null);
+  const [renda, setRenda] = useState(MOCK_USUARIO.renda.toString());
+  const [rendaTemp, setRendaTemp] = useState('');
+
+  // Bottom sheet de edição de horas trabalhadas
+  const bottomSheetHorasRef = useRef<BottomSheet>(null);
+  const [horas, setHoras] = useState(MOCK_USUARIO.horasTrabalhadas.toString());
+  const [horasTemp, setHorasTemp] = useState('');
 
   const bg = isDark ? '#0a1628' : '#eef4ff';
   const card = isDark ? '#111f35' : '#ffffff';
@@ -66,7 +82,7 @@ export default function PerfilScreen() {
   const textPrimary = isDark ? '#e8f0fe' : '#0d1b2a';
   const textSecondary = isDark ? '#6b8aaa' : '#5a7a9a';
 
-  const valorHora = (MOCK_USUARIO.renda / MOCK_USUARIO.horasTrabalhadas).toFixed(2);
+  const valorHora = (Number(renda) / Number(horas)).toFixed(2);
   const itemProps = { textPrimary, textSecondary, border, isDark };
 
   const renderBackdrop = useCallback(
@@ -105,22 +121,18 @@ export default function PerfilScreen() {
               <Ionicons name="cash-outline" size={20} color="#2E9EFF" />
               <Text style={[styles.baseLabel, { color: textSecondary }]}>Renda mensal</Text>
               <Text style={[styles.baseValor, { color: textPrimary }]}>
-                R$ {MOCK_USUARIO.renda.toLocaleString('pt-BR')}
+                R$ {Number(renda).toLocaleString('pt-BR')}
               </Text>
             </View>
             <View style={[styles.baseItem, { backgroundColor: inputBg, borderColor: border }]}>
               <Ionicons name="time-outline" size={20} color="#2E9EFF" />
               <Text style={[styles.baseLabel, { color: textSecondary }]}>Horas/mês</Text>
-              <Text style={[styles.baseValor, { color: textPrimary }]}>
-                {MOCK_USUARIO.horasTrabalhadas}h
-              </Text>
+              <Text style={[styles.baseValor, { color: textPrimary }]}>{horas}h</Text>
             </View>
             <View style={[styles.baseItem, { backgroundColor: inputBg, borderColor: border, width: '100%' }]}>
               <Ionicons name="hourglass-outline" size={20} color="#f5a623" />
               <Text style={[styles.baseLabel, { color: textSecondary }]}>Valor da sua hora</Text>
-              <Text style={[styles.baseValor, { color: textPrimary }]}>
-                R$ {valorHora}/h
-              </Text>
+              <Text style={[styles.baseValor, { color: textPrimary }]}>R$ {valorHora}/h</Text>
             </View>
           </View>
         </View>
@@ -128,27 +140,33 @@ export default function PerfilScreen() {
         {/* Configurações */}
         <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
           <Text style={[styles.cardTitulo, { color: textPrimary }]}>Configurações</Text>
-          <ItemConfig icone="person-outline" label="Editar perfil" onPress={() => {}} {...itemProps} />
-          <ItemConfig icone="lock-closed-outline" label="Alterar senha" onPress={() => {}} {...itemProps} />
+          <ItemConfig icone="person-outline" label="Editar perfil" onPress={() => router.push("/editar_perfil")} {...itemProps} />
+          <ItemConfig icone="lock-closed-outline" label="Alterar senha" onPress={() => router.push("/alterar_senha")} {...itemProps} />
           <ItemConfig
             icone="cash-outline"
             label="Renda mensal"
-            valor={`R$ ${MOCK_USUARIO.renda.toLocaleString('pt-BR')}`}
-            onPress={() => {}}
+            valor={`R$ ${Number(renda).toLocaleString('pt-BR')}`}
+            onPress={() => {
+              setRendaTemp(renda);
+              bottomSheetRendaRef.current?.expand();
+            }}
             {...itemProps}
           />
           <ItemConfig
             icone="time-outline"
             label="Horas trabalhadas"
-            valor={`${MOCK_USUARIO.horasTrabalhadas}h/mês`}
-            onPress={() => {}}
+            valor={`${horas}h/mês`}
+            onPress={() => {
+              setHorasTemp(horas);
+              bottomSheetHorasRef.current?.expand();
+            }}
             {...itemProps}
           />
           <ItemConfig
             icone="contrast-outline"
             label="Tema"
             valor={tema === 'claro' ? 'Claro' : tema === 'escuro' ? 'Escuro' : 'Sistema'}
-            onPress={() => bottomSheetRef.current?.expand()}
+            onPress={() => bottomSheetTemaRef.current?.expand()}
             {...itemProps}
           />
         </View>
@@ -156,8 +174,24 @@ export default function PerfilScreen() {
         {/* Sobre */}
         <View style={[styles.card, { backgroundColor: card, borderColor: border }]}>
           <Text style={[styles.cardTitulo, { color: textPrimary }]}>Sobre</Text>
-          <ItemConfig icone="information-circle-outline" label="Versão do app" valor="1.0.0" {...itemProps} />
-          <ItemConfig icone="globe-outline" label="Acessar versão web" onPress={() => {}} {...itemProps} />
+          <ItemConfig
+            icone="information-circle-outline"
+            label="Sobre o MindCash"
+            onPress={() => router.push('/sobre')}
+            {...itemProps}
+          />
+          <ItemConfig
+            icone="document-text-outline"
+            label="Versão do app"
+            valor="1.0.0"
+            {...itemProps}
+          />
+          <ItemConfig
+            icone="globe-outline"
+            label="Acessar versão web"
+            onPress={() => {}}
+            {...itemProps}
+          />
         </View>
 
         {/* Sair */}
@@ -168,7 +202,7 @@ export default function PerfilScreen() {
 
       {/* Bottom sheet de seleção de tema — deslize pra baixo pra fechar */}
       <BottomSheet
-        ref={bottomSheetRef}
+        ref={bottomSheetTemaRef}
         index={-1}
         snapPoints={['35%']}
         enablePanDownToClose
@@ -192,7 +226,7 @@ export default function PerfilScreen() {
               ]}
               onPress={() => {
                 setTema(opcao.id as any);
-                bottomSheetRef.current?.close();
+                bottomSheetTemaRef.current?.close();
               }}
               activeOpacity={0.8}
             >
@@ -211,9 +245,79 @@ export default function PerfilScreen() {
           ))}
         </BottomSheetView>
       </BottomSheet>
+
+      {/* Bottom sheet de edição de renda mensal */}
+      <BottomSheet
+        ref={bottomSheetRendaRef}
+        index={-1}
+        snapPoints={['30%']}
+        enablePanDownToClose
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{ backgroundColor: card }}
+        handleIndicatorStyle={{ backgroundColor: border }}
+      >
+        <BottomSheetView style={[styles.sheetContent, { backgroundColor: card }]}>
+          <Text style={[styles.sheetTitulo, { color: textPrimary }]}>Renda mensal</Text>
+          <TextInput
+            style={[styles.sheetInput, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+            placeholder="Ex: 3000"
+            placeholderTextColor={textSecondary}
+            keyboardType="numeric"
+            value={rendaTemp}
+            onChangeText={setRendaTemp}
+          />
+          <TouchableOpacity
+            style={styles.sheetBotao}
+            onPress={() => {
+              Keyboard.dismiss();
+              if (rendaTemp) setRenda(rendaTemp);
+              bottomSheetRendaRef.current?.close();
+            }}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.sheetBotaoTexto}>Salvar</Text>
+          </TouchableOpacity>
+        </BottomSheetView>
+      </BottomSheet>
+
+      {/* Bottom sheet de edição de horas trabalhadas */}
+      <BottomSheet
+        ref={bottomSheetHorasRef}
+        index={-1}
+        snapPoints={['30%']}
+        enablePanDownToClose
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{ backgroundColor: card }}
+        handleIndicatorStyle={{ backgroundColor: border }}
+      >
+        <BottomSheetView style={[styles.sheetContent, { backgroundColor: card }]}>
+          <Text style={[styles.sheetTitulo, { color: textPrimary }]}>Horas trabalhadas</Text>
+          <TextInput
+            style={[styles.sheetInput, { backgroundColor: inputBg, borderColor: border, color: textPrimary }]}
+            placeholder="Ex: 160"
+            placeholderTextColor={textSecondary}
+            keyboardType="numeric"
+            value={horasTemp}
+            onChangeText={setHorasTemp}
+          />
+          <TouchableOpacity
+            style={styles.sheetBotao}
+            onPress={() => {
+              Keyboard.dismiss();
+              if (horasTemp) setHoras(horasTemp);
+              bottomSheetHorasRef.current?.close();
+            }}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.sheetBotaoTexto}>Salvar</Text>
+          </TouchableOpacity>
+        </BottomSheetView>
+      </BottomSheet>
     </SafeAreaView>
   );
 }
+
+const AZUL = '#1560A8';
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
@@ -343,5 +447,28 @@ const styles = StyleSheet.create({
   sheetOpcaoTexto: {
     fontSize: 15,
     fontWeight: '500',
+  },
+  sheetInput: {
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+  },
+  sheetBotao: {
+    backgroundColor: AZUL,
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    shadowColor: AZUL,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  sheetBotaoTexto: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
