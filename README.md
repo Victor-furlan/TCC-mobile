@@ -1,4 +1,8 @@
-# 📱 MindCash Mobile - "Do gasto ao significado"
+# 📱 MindCash Mobile — "Do gasto ao significado"
+
+> **Trabalho de Conclusão de Curso (TCC)**  
+> **ETEC de Hortolândia** — Curso Técnico em Desenvolvimento de Sistemas  
+> **Disciplina:** Programação para Dispositivos Móveis II (PAM2)  
 
 <p align="center">
   <b>Aplicativo Mobile Companion (Auxiliar) do Projeto de TCC MindCash</b><br>
@@ -18,7 +22,7 @@ Permitir que o usuário registre **despesas e assinaturas em poucos segundos**, 
 
 ## 🛠️ Stack Tecnológica
 
-- **Framework Mobile:** [React Native](https://reactnative.dev/) (v0.86) + [Expo](https://expo.dev/) (v57)
+- **Framework Mobile:** [React Native](https://reactnative.dev/) + [Expo](https://expo.dev/)
 - **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
 - **Roteamento:** [Expo Router](https://docs.expo.dev/router/introduction/) (File-based Routing)
 - **Backend & Auth:** [Supabase](https://supabase.com/) (PostgreSQL + Realtime Auth)
@@ -26,10 +30,18 @@ Permitir que o usuário registre **despesas e assinaturas em poucos segundos**, 
 
 ---
 
+## 👥 Integrantes do Grupo
+
+- **Victor Furlan**
+- **Pérola Evellyn**
+- **Klayton Mendes**
+
+---
+
 ## 🚀 Como Executar o Projeto
 
 ### Pré-requisitos
-- Node.js instalado na máquina.
+- [Node.js](https://nodejs.org/) instalado na máquina.
 - Aplicativo **Expo Go** instalado no seu celular (disponível na Play Store e App Store).
 
 ### Passo a Passo
@@ -56,11 +68,5 @@ Permitir que o usuário registre **despesas e assinaturas em poucos segundos**, 
 
 ---
 
-## 👨‍💻 Desenvolvedores (Equipe TCC)
-- **Victor Furlan**
-- **Pérola Evellyn**
-- **Klayton Mendes**
-
----
-*Projeto desenvolvido para o Trabalho de Conclusão de Curso (TCC) e disciplina de Programação Mobile II.*
-
+## 📄 Licença e Considerações
+Projeto desenvolvido estritamente para fins acadêmicos como parte do Trabalho de Conclusão de Curso (TCC) na Etec de Hortolândia.
