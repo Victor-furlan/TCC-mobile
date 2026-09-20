@@ -74,7 +74,7 @@ export default function HistoricoScreen() {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Text style={[styles.titulo, { color: cores.textPrimario }]}>Histórico</Text>
 
-        <View style={[styles.cardResumo, { backgroundColor: CoresFixas.azul }]}>
+        <View style={[styles.cardResumo, { backgroundColor: cores.authHeaderBg }]}>
           <Text style={styles.resumoLabel}>Total em setembro</Text>
           <Text style={styles.resumoValor}>
             R$ {(totalDespesas + totalAssinaturas).toFixed(2).replace('.', ',')}

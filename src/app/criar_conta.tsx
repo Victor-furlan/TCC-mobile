@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   View,
   Text,
@@ -11,205 +11,286 @@ import {
   Image,
   StatusBar,
   ScrollView,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { useTema } from '@/contexts/temaContexto';
-import { useCores } from '@/constants/useCores';
-import { CoresFixas } from '@/constants/cores';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { SvgXml } from "react-native-svg";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { CoresFixas } from "@/constants/cores";
+import { useCores } from "@/constants/useCores";
+import { useTema } from "@/contexts/temaContexto";
+
+function makeSvg(cor: string) {
+  return `<svg width="393" height="72" viewBox="0 0 393 72" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 40.2005C0 15.9173 21.4905 -2.71049 45.5834 0.324674C154.55 14.052 232.191 16.92 346.371 1.30801C370.829 -2.03618 393 16.6882 393 41.3738V71.2496H0V40.2005Z" fill="${cor}"/></svg>`;
+}
+
+function makeSvgFundo(cor: string) {
+  return `<svg viewBox="0 0 420 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="210" cy="210" r="180" stroke="${cor}" stroke-opacity="0.15" stroke-width="1.5"/>
+    <circle cx="210" cy="210" r="140" stroke="${cor}" stroke-opacity="0.12" stroke-width="1.5"/>
+    <circle cx="210" cy="210" r="100" stroke="${cor}" stroke-opacity="0.1" stroke-width="1.5"/>
+    <line x1="210" y1="30" x2="210" y2="55" stroke="${cor}" stroke-opacity="0.4" stroke-width="3" stroke-linecap="round"/>
+    <line x1="210" y1="30" x2="210" y2="120" stroke="${cor}" stroke-opacity="0.6" stroke-width="3" stroke-linecap="round" transform="rotate(60 210 210)"/>
+    <line x1="210" y1="30" x2="210" y2="90" stroke="${cor}" stroke-opacity="0.3" stroke-width="3" stroke-linecap="round" transform="rotate(150 210 210)"/>
+  </svg>`;
+}
 
 export default function CriarContaScreen() {
   const router = useRouter();
-  const { isDark } = useTema();
   const cores = useCores();
-
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [confirmarSenha, setConfirmarSenha] = useState('');
-  const [carregando, setCarregando] = useState(false);
-  const [erro, setErro] = useState('');
+  const { isDark } = useTema();
 
   const logo = isDark
-    ? require('@/assets/images/logo_completa_mindcash_escura.png')
-    : require('@/assets/images/logo_completa_mindcash_clara.png');
+    ? require("@/assets/images/logo_completa_mindcash_escura.png")
+    : require("@/assets/images/logo_completa_mindcash_clara.png");
+
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [senhaVisivel, setSenhaVisivel] = useState(false);
+  const [confirmarSenhaVisivel, setConfirmarSenhaVisivel] = useState(false);
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState("");
 
   async function handleCriarConta() {
     if (!nome || !email || !senha || !confirmarSenha) {
-      setErro('Preencha todos os campos.');
+      setErro("Preencha todos os campos.");
       return;
     }
     if (senha !== confirmarSenha) {
-      setErro('As senhas não coincidem.');
+      setErro("As senhas não coincidem.");
       return;
     }
     if (senha.length < 6) {
-      setErro('A senha deve ter pelo menos 6 caracteres.');
+      setErro("A senha deve ter pelo menos 6 caracteres.");
       return;
     }
-    setErro('');
+    setErro("");
     setCarregando(true);
     setTimeout(() => {
       setCarregando(false);
-      router.replace('/');
+      router.replace("/");
     }, 1000);
   }
 
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: cores.bg }]} edges={['bottom']}>
+    <View style={[styles.container, { backgroundColor: cores.card }]}>
       <StatusBar
-        barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={cores.bg}
+        barStyle={cores.authStatusBar as "light-content" | "dark-content"}
+        backgroundColor={cores.authHeaderBg}
+        translucent
       />
+
+      {/* Header */}
+      <View style={[styles.header, { backgroundColor: cores.authHeaderBg }]}>
+        <SvgXml
+          xml={makeSvgFundo(cores.authSvgFundo)}
+          width="420"
+          height="420"
+          style={styles.svgFundo}
+        />
+        <SafeAreaView edges={["top"]} style={styles.safeHeader}>
+          <Image source={logo} style={styles.logo} resizeMode="contain" />
+          <Text style={[styles.titulo, { color: cores.authTitulo }]}>
+            Crie sua conta
+          </Text>
+          <Text style={[styles.subtitulo, { color: cores.authSubtitulo }]}>
+            Comece a controlar seus gastos
+          </Text>
+        </SafeAreaView>
+      </View>
+
+      {/* Ondas de transição */}
+      <SvgXml xml={makeSvg(cores.authOnda1)} width="100%" height={72} preserveAspectRatio="none" style={styles.onda1} />
+      <SvgXml xml={makeSvg(cores.authOnda2)} width="100%" height={72} preserveAspectRatio="none" style={styles.onda2} />
+      <SvgXml xml={makeSvg(cores.authOnda3)} width="100%" height={72} preserveAspectRatio="none" style={styles.onda3} />
+
+      {/* Formulário */}
       <KeyboardAvoidingView
-        style={[styles.container, { backgroundColor: cores.bg }]}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView
-          contentContainerStyle={styles.scroll}
-          showsVerticalScrollIndicator={false}
+          style={[styles.card, { backgroundColor: cores.card }]}
+          contentContainerStyle={styles.cardConteudo}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <View style={styles.header}>
-            <Image source={logo} style={styles.logo} resizeMode="contain" />
-            <Text style={[styles.subtitulo, { color: cores.textSecundario }]}>
-              DO GASTO AO SIGNIFICADO
-            </Text>
+          {/* Nome */}
+          <View style={[styles.inputWrapper, { backgroundColor: cores.inputBg, borderColor: cores.inputBorder }]}>
+            <Ionicons name="person-outline" size={20} color={CoresFixas.azulClaro} style={styles.inputIcone} />
+            <TextInput
+              style={[styles.input, { color: cores.textPrimario }]}
+              placeholder="Nome"
+              placeholderTextColor={cores.textSecundario}
+              autoCapitalize="words"
+              value={nome}
+              onChangeText={(text) => { setNome(text); setErro(""); }}
+            />
           </View>
 
-          <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
-            <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Criar conta</Text>
+          {/* E-mail */}
+          <View style={[styles.inputWrapper, { backgroundColor: cores.inputBg, borderColor: cores.inputBorder }]}>
+            <Ionicons name="mail-outline" size={20} color={CoresFixas.azulClaro} style={styles.inputIcone} />
+            <TextInput
+              style={[styles.input, { color: cores.textPrimario }]}
+              placeholder="E-mail"
+              placeholderTextColor={cores.textSecundario}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={(text) => { setEmail(text); setErro(""); }}
+            />
+          </View>
 
-            <View style={styles.campo}>
-              <Text style={[styles.label, { color: cores.textSecundario }]}>Nome</Text>
-              <TextInput
-                style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
-                placeholder="Seu nome"
-                placeholderTextColor={cores.textSecundario}
-                autoCapitalize="words"
-                value={nome}
-                onChangeText={text => { setNome(text); setErro(''); }}
+          {/* Senha */}
+          <View style={[styles.inputWrapper, { backgroundColor: cores.inputBg, borderColor: cores.inputBorder }]}>
+            <Ionicons name="lock-closed-outline" size={20} color={CoresFixas.azulClaro} style={styles.inputIcone} />
+            <TextInput
+              style={[styles.input, { flex: 1, color: cores.textPrimario }]}
+              placeholder="Senha"
+              placeholderTextColor={cores.textSecundario}
+              secureTextEntry={!senhaVisivel}
+              value={senha}
+              onChangeText={(text) => { setSenha(text); setErro(""); }}
+            />
+            <TouchableOpacity onPress={() => setSenhaVisivel((v) => !v)} activeOpacity={0.7}>
+              <Ionicons
+                name={senhaVisivel ? "eye-outline" : "eye-off-outline"}
+                size={20}
+                color={cores.textSecundario}
               />
-            </View>
-
-            <View style={styles.campo}>
-              <Text style={[styles.label, { color: cores.textSecundario }]}>E-mail</Text>
-              <TextInput
-                style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
-                placeholder="seu@email.com"
-                placeholderTextColor={cores.textSecundario}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={text => { setEmail(text); setErro(''); }}
-              />
-            </View>
-
-            <View style={styles.campo}>
-              <Text style={[styles.label, { color: cores.textSecundario }]}>Senha</Text>
-              <TextInput
-                style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
-                placeholder="Mínimo 6 caracteres"
-                placeholderTextColor={cores.textSecundario}
-                secureTextEntry
-                value={senha}
-                onChangeText={text => { setSenha(text); setErro(''); }}
-              />
-            </View>
-
-            <View style={styles.campo}>
-              <Text style={[styles.label, { color: cores.textSecundario }]}>Confirmar senha</Text>
-              <TextInput
-                style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
-                placeholder="Repita a senha"
-                placeholderTextColor={cores.textSecundario}
-                secureTextEntry
-                value={confirmarSenha}
-                onChangeText={text => { setConfirmarSenha(text); setErro(''); }}
-              />
-            </View>
-
-            {erro ? <Text style={styles.erro}>{erro}</Text> : null}
-
-            <TouchableOpacity
-              style={[styles.botao, carregando && styles.botaoDesabilitado]}
-              onPress={handleCriarConta}
-              disabled={carregando}
-              activeOpacity={0.85}
-            >
-              {carregando
-                ? <ActivityIndicator color={CoresFixas.branco} />
-                : <Text style={styles.botaoTexto}>Criar conta</Text>
-              }
             </TouchableOpacity>
           </View>
 
+          {/* Confirmar senha */}
+          <View style={[styles.inputWrapper, { backgroundColor: cores.inputBg, borderColor: cores.inputBorder }]}>
+            <Ionicons name="lock-closed-outline" size={20} color={CoresFixas.azulClaro} style={styles.inputIcone} />
+            <TextInput
+              style={[styles.input, { flex: 1, color: cores.textPrimario }]}
+              placeholder="Confirmar senha"
+              placeholderTextColor={cores.textSecundario}
+              secureTextEntry={!confirmarSenhaVisivel}
+              value={confirmarSenha}
+              onChangeText={(text) => { setConfirmarSenha(text); setErro(""); }}
+            />
+            <TouchableOpacity onPress={() => setConfirmarSenhaVisivel((v) => !v)} activeOpacity={0.7}>
+              <Ionicons
+                name={confirmarSenhaVisivel ? "eye-outline" : "eye-off-outline"}
+                size={20}
+                color={cores.textSecundario}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {erro ? <Text style={styles.erro}>{erro}</Text> : null}
+
+          {/* Botão */}
+          <TouchableOpacity
+            style={[styles.botao, carregando && styles.botaoDesabilitado]}
+            onPress={handleCriarConta}
+            disabled={carregando}
+            activeOpacity={0.85}
+          >
+            {carregando
+              ? <ActivityIndicator color={CoresFixas.branco} />
+              : <Text style={styles.botaoTexto}>Criar conta</Text>
+            }
+          </TouchableOpacity>
+
+          {/* Rodapé */}
           <View style={styles.rodape}>
-            <Text style={[styles.rodapeTexto, { color: cores.textSecundario }]}>Já tem conta? </Text>
+            <Text style={[styles.rodapeTexto, { color: cores.textSecundario }]}>
+              Já tem conta?{" "}
+            </Text>
             <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
-              <Text style={styles.link}>Entrar</Text>
+              <Text style={[styles.link, { color: cores.authLink }]}>Entrar</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-  },
   container: {
     flex: 1,
   },
-  scroll: {
-    flexGrow: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 40,
-    gap: 24,
-    justifyContent: 'center',
-  },
   header: {
-    alignItems: 'center',
-    gap: 10,
+    paddingBottom: 120, // menos que o login pois tem mais campos no form
+  },
+  safeHeader: {
+    alignItems: "center",
+    paddingTop: 50,
+    paddingBottom: 16,
+    gap: 8,
+  },
+  svgFundo: {
+    position: "absolute",
+    bottom: -30,
+    right: -120,
+    opacity: 1,
   },
   logo: {
     width: 260,
-    height: 82,
+    height: 85,
+    marginBottom: 8,
+  },
+  titulo: {
+    fontSize: 22,
+    fontWeight: "800",
   },
   subtitulo: {
-    fontSize: 11,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-    fontWeight: '500',
+    fontSize: 12,
+    fontWeight: "500",
+  },
+  onda1: {
+    position: "absolute",
+    top: 239, // ajustado pro header menor
+    left: 0,
+    right: 0,
+    zIndex: 7,
+  },
+  onda2: {
+    position: "absolute",
+    top: 265,
+    left: 0,
+    right: 0,
+    zIndex: 8,
+  },
+  onda3: {
+    position: "absolute",
+    top: 297,
+    left: 0,
+    right: 0,
+    zIndex: 9,
   },
   card: {
-    borderRadius: 20,
-    borderWidth: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 24,
+    flex: 1,
+  },
+  cardConteudo: {
+    paddingHorizontal: 36,
+    paddingTop: 24,
+    paddingBottom: 40,
     gap: 14,
   },
-  cardTitulo: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 4,
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 8,
+    borderWidth: 1.5,
+    height: 56,
+    paddingHorizontal: 14,
   },
-  campo: {
-    gap: 6,
-  },
-  label: {
-    fontSize: 12,
-    fontWeight: '600',
-    letterSpacing: 0.3,
+  inputIcone: {
+    marginRight: 10,
   },
   input: {
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 15,
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "600",
   },
   erro: {
     color: CoresFixas.erro,
@@ -218,10 +299,11 @@ const styles = StyleSheet.create({
   },
   botao: {
     backgroundColor: CoresFixas.azul,
-    borderRadius: 12,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 4,
+    height: 54,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 8,
     shadowColor: CoresFixas.azul,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
@@ -234,20 +316,21 @@ const styles = StyleSheet.create({
   botaoTexto: {
     color: CoresFixas.branco,
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "800",
     letterSpacing: 0.3,
   },
-  link: {
-    color: CoresFixas.azulClaro,
-    fontSize: 14,
-    fontWeight: '600',
-  },
   rodape: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 16,
   },
   rodapeTexto: {
     fontSize: 14,
+    opacity: 0.8,
+  },
+  link: {
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

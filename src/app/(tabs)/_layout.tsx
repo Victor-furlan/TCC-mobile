@@ -1,30 +1,27 @@
 import { Tabs } from 'expo-router';
-import { useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTema } from '@/contexts/temaContexto';
+import { useCores } from '@/constants/useCores';
+import { CoresFixas } from '@/constants/cores';
 
 export default function TabsLayout() {
   const { isDark } = useTema();
-
-  const bg = isDark ? '#0a1628' : '#ffffff';
-  const border = isDark ? '#1e3050' : '#e8eef5';
-  const ativo = '#2E9EFF';
-  const inativo = isDark ? '#4a6080' : '#99aabb';
+  const cores = useCores();
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: bg,
-          borderTopColor: border,
+          backgroundColor: cores.card,
+          borderTopColor: cores.border,
           borderTopWidth: 1,
           height: 60,
           paddingBottom: 8,
           paddingTop: 8,
         },
-        tabBarActiveTintColor: ativo,
-        tabBarInactiveTintColor: inativo,
+        tabBarActiveTintColor: CoresFixas.azulClaro,
+        tabBarInactiveTintColor: cores.textSecundario,
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: '600',
@@ -32,7 +29,7 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: 'Dashboard',
           tabBarIcon: ({ color, size }) => (
