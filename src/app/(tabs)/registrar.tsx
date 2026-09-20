@@ -65,7 +65,6 @@ export default function RegistrarScreen() {
   const cores = useCores();
 
   const [tipo, setTipo] = useState<'despesa' | 'assinatura'>('despesa');
-
   const [descricao, setDescricao] = useState('');
   const [valor, setValor] = useState('');
   const [categoria, setCategoria] = useState('');
@@ -79,15 +78,9 @@ export default function RegistrarScreen() {
   const [sucesso, setSucesso] = useState(false);
 
   function limparCampos() {
-    setDescricao('');
-    setValor('');
-    setCategoria('');
-    setHumor('');
-    setMotivo('');
-    setArrependimento(0);
-    setData('');
-    setPeriodicidade('');
-    setProximaCobranca('');
+    setDescricao(''); setValor(''); setCategoria(''); setHumor('');
+    setMotivo(''); setArrependimento(0); setData('');
+    setPeriodicidade(''); setProximaCobranca('');
   }
 
   function handleSalvar() {
@@ -96,15 +89,15 @@ export default function RegistrarScreen() {
     setTimeout(() => {
       setCarregando(false);
       setSucesso(true);
-      setTimeout(() => {
-        setSucesso(false);
-        limparCampos();
-      }, 1500);
+      setTimeout(() => { setSucesso(false); limparCampos(); }, 1500);
     }, 1000);
   }
 
   const podeSalvar = valor && descricao && categoria &&
     (tipo === 'despesa' || (tipo === 'assinatura' && periodicidade));
+
+  // estilo do botão de tipo ativo — usa authHeaderBg pra consistência com o resto do app
+  const estiloAtivo = { backgroundColor: cores.authHeaderBg, borderColor: cores.authHeaderBg };
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: cores.bg }]}>
@@ -116,11 +109,12 @@ export default function RegistrarScreen() {
       >
         <Text style={[styles.titulo, { color: cores.textPrimario }]}>Registrar</Text>
 
+        {/* Tipo */}
         <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
           <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Tipo</Text>
           <View style={styles.tipoRow}>
             <TouchableOpacity
-              style={[styles.tipoBotao, tipo === 'despesa' && styles.tipoAtivo, { borderColor: cores.border }]}
+              style={[styles.tipoBotao, { borderColor: cores.border }, tipo === 'despesa' && estiloAtivo]}
               onPress={() => { setTipo('despesa'); limparCampos(); }}
               activeOpacity={0.8}
             >
@@ -130,7 +124,7 @@ export default function RegistrarScreen() {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.tipoBotao, tipo === 'assinatura' && styles.tipoAtivo, { borderColor: cores.border }]}
+              style={[styles.tipoBotao, { borderColor: cores.border }, tipo === 'assinatura' && estiloAtivo]}
               onPress={() => { setTipo('assinatura'); limparCampos(); }}
               activeOpacity={0.8}
             >
@@ -142,6 +136,7 @@ export default function RegistrarScreen() {
           </View>
         </View>
 
+        {/* Detalhes */}
         <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
           <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Detalhes</Text>
 
@@ -214,11 +209,7 @@ export default function RegistrarScreen() {
                   {PERIODICIDADES.map(p => (
                     <TouchableOpacity
                       key={p.id}
-                      style={[
-                        styles.tipoBotao,
-                        periodicidade === p.id && styles.tipoAtivo,
-                        { borderColor: cores.border },
-                      ]}
+                      style={[styles.tipoBotao, { borderColor: cores.border }, periodicidade === p.id && estiloAtivo]}
                       onPress={() => setPeriodicidade(p.id)}
                       activeOpacity={0.8}
                     >
@@ -233,6 +224,7 @@ export default function RegistrarScreen() {
           )}
         </View>
 
+        {/* Categoria */}
         <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
           <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Categoria</Text>
           <View style={styles.categoriaGrid}>
@@ -241,7 +233,8 @@ export default function RegistrarScreen() {
                 key={cat.id}
                 style={[
                   styles.categoriaItem,
-                  { backgroundColor: cores.inputBg, borderColor: categoria === cat.id ? CoresFixas.azulClaro : cores.border },
+                  { backgroundColor: cores.inputBg, borderColor: categoria === cat.id ? cores.authHeaderBg : cores.border },
+                  categoria === cat.id && { backgroundColor: cores.authHeaderBg + '22' },
                 ]}
                 onPress={() => setCategoria(cat.id)}
                 activeOpacity={0.8}
@@ -249,9 +242,9 @@ export default function RegistrarScreen() {
                 <Ionicons
                   name={cat.icone as any}
                   size={22}
-                  color={categoria === cat.id ? CoresFixas.azulClaro : cores.textSecundario}
+                  color={categoria === cat.id ? cores.authHeaderBg : cores.textSecundario}
                 />
-                <Text style={[styles.categoriaLabel, { color: categoria === cat.id ? CoresFixas.azulClaro : cores.textSecundario }]}>
+                <Text style={[styles.categoriaLabel, { color: categoria === cat.id ? cores.authHeaderBg : cores.textSecundario }]}>
                   {cat.label}
                 </Text>
               </TouchableOpacity>
@@ -259,6 +252,7 @@ export default function RegistrarScreen() {
           </View>
         </View>
 
+        {/* Campos Emocionais */}
         <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
           <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Campos Emocionais (Opcional)</Text>
 
@@ -272,13 +266,14 @@ export default function RegistrarScreen() {
                   key={h.id}
                   style={[
                     styles.humorItem,
-                    { borderColor: humor === h.id ? CoresFixas.azulClaro : cores.border, backgroundColor: cores.inputBg },
+                    { backgroundColor: cores.inputBg, borderColor: humor === h.id ? cores.authHeaderBg : cores.border },
+                    humor === h.id && { backgroundColor: cores.authHeaderBg + '22' },
                   ]}
                   onPress={() => setHumor(humor === h.id ? '' : h.id)}
                   activeOpacity={0.8}
                 >
                   <Text style={styles.humorEmoji}>{h.emoji}</Text>
-                  <Text style={[styles.humorLabel, { color: humor === h.id ? CoresFixas.azulClaro : cores.textSecundario }]}>
+                  <Text style={[styles.humorLabel, { color: humor === h.id ? cores.authHeaderBg : cores.textSecundario }]}>
                     {h.label}
                   </Text>
                 </TouchableOpacity>
@@ -307,9 +302,11 @@ export default function RegistrarScreen() {
           </View>
         </View>
 
+        {/* Botão salvar */}
         <TouchableOpacity
           style={[
             styles.botao,
+            { backgroundColor: cores.authHeaderBg },
             !podeSalvar && styles.botaoDesabilitado,
             sucesso && styles.botaoSucesso,
           ]}
@@ -369,10 +366,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
-  },
-  tipoAtivo: {
-    backgroundColor: CoresFixas.azul,
-    borderColor: CoresFixas.azul,
   },
   tipoTexto: {
     fontSize: 14,
@@ -450,16 +443,15 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   botao: {
-    backgroundColor: CoresFixas.azul,
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 8,
-    shadowColor: CoresFixas.azul,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 6,
   },

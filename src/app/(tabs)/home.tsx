@@ -39,6 +39,7 @@ export default function DashboardScreen() {
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
+        {/* Topo */}
         <View style={styles.topo}>
           <View>
             <Text style={[styles.saudacao, { color: cores.textSecundario }]}>Olá,</Text>
@@ -49,7 +50,8 @@ export default function DashboardScreen() {
           </View>
         </View>
 
-        <View style={[styles.cardPrincipal, { backgroundColor: CoresFixas.azul }]}>
+        {/* Card principal */}
+        <View style={[styles.cardPrincipal, { backgroundColor: cores.authHeaderBg }]}>
           <Text style={styles.cardPrincipalLabel}>Total gasto no mês</Text>
           <Text style={styles.cardPrincipalValor}>
             R$ {MOCK.totalGasto.toFixed(2).replace('.', ',')}
@@ -62,15 +64,16 @@ export default function DashboardScreen() {
           </Text>
         </View>
 
+        {/* Cards secundários — inputBg cria contraste com o bg */}
         <View style={styles.linha}>
-          <View style={[styles.cardSecundario, { backgroundColor: cores.card, borderColor: cores.border }]}>
+          <View style={[styles.cardSecundario, { backgroundColor: cores.inputBg, borderColor: cores.border }]}>
             <Ionicons name="repeat-outline" size={20} color={CoresFixas.azulClaro} />
             <Text style={[styles.cardSecLabel, { color: cores.textSecundario }]}>Assinaturas</Text>
             <Text style={[styles.cardSecValor, { color: cores.textPrimario }]}>
               R$ {MOCK.totalAssinaturas.toFixed(2).replace('.', ',')}
             </Text>
           </View>
-          <View style={[styles.cardSecundario, { backgroundColor: cores.card, borderColor: cores.border }]}>
+          <View style={[styles.cardSecundario, { backgroundColor: cores.inputBg, borderColor: cores.border }]}>
             <Ionicons name="cart-outline" size={20} color={CoresFixas.azulClaro} />
             <Text style={[styles.cardSecLabel, { color: cores.textSecundario }]}>Despesas</Text>
             <Text style={[styles.cardSecValor, { color: cores.textPrimario }]}>
@@ -79,6 +82,7 @@ export default function DashboardScreen() {
           </View>
         </View>
 
+        {/* Próxima renovação */}
         <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
           <View style={styles.cardTopo}>
             <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Próxima renovação</Text>
@@ -97,6 +101,7 @@ export default function DashboardScreen() {
           </View>
         </View>
 
+        {/* Últimos lançamentos */}
         <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
           <View style={styles.cardTopo}>
             <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Últimos lançamentos</Text>
@@ -151,9 +156,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   cardPrincipal: {
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 20,
     gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   cardPrincipalLabel: {
     color: CoresFixas.cardPrincipalLabel,
@@ -186,7 +196,7 @@ const styles = StyleSheet.create({
   },
   cardSecundario: {
     flex: 1,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     padding: 16,
     gap: 6,
@@ -199,7 +209,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   card: {
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     padding: 16,
     gap: 12,

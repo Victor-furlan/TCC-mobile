@@ -91,7 +91,7 @@ export default function PerfilScreen() {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Text style={[styles.titulo, { color: cores.textPrimario }]}>Perfil</Text>
 
-        <View style={[styles.cardPerfil, { backgroundColor: CoresFixas.azul }]}>
+        <View style={[styles.cardPerfil, { backgroundColor: cores.authHeaderBg }]}>
           <View style={styles.avatar}>
             <Text style={styles.avatarLetra}>
               {MOCK_USUARIO.nome.charAt(0).toUpperCase()}
@@ -161,8 +161,9 @@ export default function PerfilScreen() {
           <ItemConfig icone="globe-outline" label="Acessar versão web" onPress={() => {}} {...itemProps} />
         </View>
 
+        {/*botão sair da conta*/}
         <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
-          <ItemConfig icone="log-out-outline" label="Sair" cor={CoresFixas.erro} onPress={() => {}} {...itemProps} />
+          <ItemConfig icone="log-out-outline" label="Sair" cor={CoresFixas.erro} onPress={() => router.replace("/")} {...itemProps} />
         </View>
       </ScrollView>
 
