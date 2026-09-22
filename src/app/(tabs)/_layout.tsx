@@ -13,8 +13,8 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: cores.bg,
-          borderTopColor: cores.bg,
+          backgroundColor: cores.card,
+          borderTopColor: cores.border,
           borderTopWidth: 1,
           height: 60,
           paddingBottom: 8,
@@ -24,14 +24,14 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: cores.textSecundario,
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: "600",
+          fontWeight: '600',
         },
       }}
     >
       <Tabs.Screen
         name="home"
         options={{
-          title: "Dashboard",
+          title: 'Dashboard',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="grid-outline" size={size} color={color} />
           ),
@@ -40,7 +40,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="registrar"
         options={{
-          title: "Registrar",
+          title: 'Registrar',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="add-circle-outline" size={size} color={color} />
           ),
@@ -49,7 +49,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="historico"
         options={{
-          title: "Histórico",
+          title: 'Histórico',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list-outline" size={size} color={color} />
           ),
@@ -58,7 +58,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="perfil"
         options={{
-          title: "Perfil",
+          title: 'Perfil',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-outline" size={size} color={color} />
           ),

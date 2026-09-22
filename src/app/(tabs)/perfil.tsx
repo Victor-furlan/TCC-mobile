@@ -87,21 +87,11 @@ export default function PerfilScreen() {
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: cores.bg }]}>
-      <StatusBar
-        barStyle={isDark ? "light-content" : "dark-content"}
-        backgroundColor={cores.bg}
-      />
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={[styles.titulo, { color: cores.textPrimario }]}>
-          Perfil
-        </Text>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={cores.bg} />
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <Text style={[styles.titulo, { color: cores.textPrimario }]}>Perfil</Text>
 
-        <View
-          style={[styles.cardPerfil, { backgroundColor: cores.authHeaderBg }]}
-        >
+        <View style={[styles.cardPerfil, { backgroundColor: cores.authHeaderBg }]}>
           <View style={styles.avatar}>
             <Text style={styles.avatarLetra}>
               {MOCK_USUARIO.nome.charAt(0).toUpperCase()}
@@ -110,284 +100,128 @@ export default function PerfilScreen() {
           <View style={styles.perfilInfo}>
             <Text style={styles.perfilNome}>{MOCK_USUARIO.nome}</Text>
             <Text style={styles.perfilEmail}>{MOCK_USUARIO.email}</Text>
-            <Text style={styles.perfilMembro}>
-              Membro desde {MOCK_USUARIO.membro_desde}
-            </Text>
+            <Text style={styles.perfilMembro}>Membro desde {MOCK_USUARIO.membro_desde}</Text>
           </View>
         </View>
 
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: cores.card, borderColor: cores.border },
-          ]}
-        >
-          <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>
-            Base Financeira
-          </Text>
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
+          <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Base Financeira</Text>
           <View style={styles.baseGrid}>
-            <View
-              style={[
-                styles.baseItem,
-                { backgroundColor: cores.inputBg, borderColor: cores.border },
-              ]}
-            >
-              <Ionicons
-                name="cash-outline"
-                size={20}
-                color={CoresFixas.azulClaro}
-              />
-              <Text style={[styles.baseLabel, { color: cores.textSecundario }]}>
-                Renda mensal
-              </Text>
+            <View style={[styles.baseItem, { backgroundColor: cores.inputBg, borderColor: cores.border }]}>
+              <Ionicons name="cash-outline" size={20} color={CoresFixas.azulClaro} />
+              <Text style={[styles.baseLabel, { color: cores.textSecundario }]}>Renda mensal</Text>
               <Text style={[styles.baseValor, { color: cores.textPrimario }]}>
-                R$ {Number(renda).toLocaleString("pt-BR")}
+                R$ {Number(renda).toLocaleString('pt-BR')}
               </Text>
             </View>
-            <View
-              style={[
-                styles.baseItem,
-                { backgroundColor: cores.inputBg, borderColor: cores.border },
-              ]}
-            >
-              <Ionicons
-                name="time-outline"
-                size={20}
-                color={CoresFixas.azulClaro}
-              />
-              <Text style={[styles.baseLabel, { color: cores.textSecundario }]}>
-                Horas/mês
-              </Text>
-              <Text style={[styles.baseValor, { color: cores.textPrimario }]}>
-                {horas}h
-              </Text>
+            <View style={[styles.baseItem, { backgroundColor: cores.inputBg, borderColor: cores.border }]}>
+              <Ionicons name="time-outline" size={20} color={CoresFixas.azulClaro} />
+              <Text style={[styles.baseLabel, { color: cores.textSecundario }]}>Horas/mês</Text>
+              <Text style={[styles.baseValor, { color: cores.textPrimario }]}>{horas}h</Text>
             </View>
-            <View
-              style={[
-                styles.baseItem,
-                {
-                  backgroundColor: cores.inputBg,
-                  borderColor: cores.border,
-                  width: "100%",
-                },
-              ]}
-            >
+            <View style={[styles.baseItem, { backgroundColor: cores.inputBg, borderColor: cores.border, width: '100%' }]}>
               <Ionicons name="hourglass-outline" size={20} color="#f5a623" />
-              <Text style={[styles.baseLabel, { color: cores.textSecundario }]}>
-                Valor da sua hora
-              </Text>
-              <Text style={[styles.baseValor, { color: cores.textPrimario }]}>
-                R$ {valorHora}/h
-              </Text>
+              <Text style={[styles.baseLabel, { color: cores.textSecundario }]}>Valor da sua hora</Text>
+              <Text style={[styles.baseValor, { color: cores.textPrimario }]}>R$ {valorHora}/h</Text>
             </View>
           </View>
         </View>
 
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: cores.card, borderColor: cores.border },
-          ]}
-        >
-          <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>
-            Configurações
-          </Text>
-          <ItemConfig
-            icone="person-outline"
-            label="Editar perfil"
-            onPress={() => router.push("/editar_perfil")}
-            {...itemProps}
-          />
-          <ItemConfig
-            icone="lock-closed-outline"
-            label="Alterar senha"
-            onPress={() => router.push("/alterar_senha")}
-            {...itemProps}
-          />
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
+          <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Configurações</Text>
+          <ItemConfig icone="person-outline" label="Editar perfil" onPress={() => router.push('/editar_perfil')} {...itemProps} />
+          <ItemConfig icone="lock-closed-outline" label="Alterar senha" onPress={() => router.push('/alterar_senha')} {...itemProps} />
           <ItemConfig
             icone="cash-outline"
             label="Renda mensal"
-            valor={`R$ ${Number(renda).toLocaleString("pt-BR")}`}
-            onPress={() => {
-              setRendaTemp(renda);
-              bottomSheetRendaRef.current?.expand();
-            }}
+            valor={`R$ ${Number(renda).toLocaleString('pt-BR')}`}
+            onPress={() => { setRendaTemp(renda); bottomSheetRendaRef.current?.expand(); }}
             {...itemProps}
           />
           <ItemConfig
             icone="time-outline"
             label="Horas trabalhadas"
             valor={`${horas}h/mês`}
-            onPress={() => {
-              setHorasTemp(horas);
-              bottomSheetHorasRef.current?.expand();
-            }}
+            onPress={() => { setHorasTemp(horas); bottomSheetHorasRef.current?.expand(); }}
             {...itemProps}
           />
           <ItemConfig
             icone="contrast-outline"
             label="Tema"
-            valor={
-              tema === "claro"
-                ? "Claro"
-                : tema === "escuro"
-                  ? "Escuro"
-                  : "Sistema"
-            }
+            valor={tema === 'claro' ? 'Claro' : tema === 'escuro' ? 'Escuro' : 'Sistema'}
             onPress={() => bottomSheetTemaRef.current?.expand()}
             {...itemProps}
           />
         </View>
 
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: cores.card, borderColor: cores.border },
-          ]}
-        >
-          <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>
-            Sobre
-          </Text>
-          <ItemConfig
-            icone="information-circle-outline"
-            label="Sobre o MindCash"
-            onPress={() => router.push("/sobre")}
-            {...itemProps}
-          />
-          <ItemConfig
-            icone="document-text-outline"
-            label="Versão do app"
-            valor="1.0.0"
-            {...itemProps}
-          />
-          <ItemConfig
-            icone="globe-outline"
-            label="Acessar versão web"
-            onPress={() => {}}
-            {...itemProps}
-          />
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
+          <Text style={[styles.cardTitulo, { color: cores.textPrimario }]}>Sobre</Text>
+          <ItemConfig icone="information-circle-outline" label="Sobre o MindCash" onPress={() => router.push('/sobre')} {...itemProps} />
+          <ItemConfig icone="document-text-outline" label="Versão do app" valor="1.0.0" {...itemProps} />
+          <ItemConfig icone="globe-outline" label="Acessar versão web" onPress={() => {}} {...itemProps} />
         </View>
 
         {/*botão sair da conta*/}
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: cores.card, borderColor: cores.border },
-          ]}
-        >
-          <ItemConfig
-            icone="log-out-outline"
-            label="Sair"
-            cor={CoresFixas.erro}
-            onPress={() => router.replace("/")}
-            {...itemProps}
-          />
+        <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
+          <ItemConfig icone="log-out-outline" label="Sair" cor={CoresFixas.erro} onPress={() => router.replace("/")} {...itemProps} />
         </View>
       </ScrollView>
 
-      {/*Bottom sheet usado para abrir uma telinha que surge de baixo da tela */}
-
-      {/*BottomSheet do tema */}
       <BottomSheet
         ref={bottomSheetTemaRef}
         index={-1}
-        snapPoints={["35%"]}
+        snapPoints={['35%']}
         enablePanDownToClose
         backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: cores.bg }}
+        backgroundStyle={{ backgroundColor: cores.card }}
         handleIndicatorStyle={{ backgroundColor: cores.border }}
       >
-        <BottomSheetView
-          style={[styles.sheetContent, { backgroundColor: cores.bg }]}
-        >
-          <Text style={[styles.sheetTitulo, { color: cores.textPrimario }]}>
-            Tema
-          </Text>
+        <BottomSheetView style={[styles.sheetContent, { backgroundColor: cores.card }]}>
+          <Text style={[styles.sheetTitulo, { color: cores.textPrimario }]}>Tema</Text>
           {[
-            { id: "claro", label: "Claro", icone: "sunny-outline" },
-            { id: "escuro", label: "Escuro", icone: "moon-outline" },
-            {
-              id: "sistema",
-              label: "Sistema",
-              icone: "phone-portrait-outline",
-            },
-          ].map((opcao) => (
+            { id: 'claro', label: 'Claro', icone: 'sunny-outline' },
+            { id: 'escuro', label: 'Escuro', icone: 'moon-outline' },
+            { id: 'sistema', label: 'Sistema', icone: 'phone-portrait-outline' },
+          ].map(opcao => (
             <TouchableOpacity
               key={opcao.id}
               style={[
                 styles.sheetOpcao,
                 { borderColor: cores.border },
-                tema === opcao.id && {
-                  borderColor: CoresFixas.azulClaro,
-                  backgroundColor: "rgba(46,158,255,0.08)",
-                },
+                tema === opcao.id && { borderColor: CoresFixas.azulClaro, backgroundColor: 'rgba(46,158,255,0.08)' },
               ]}
-              onPress={() => {
-                setTema(opcao.id as any);
-                bottomSheetTemaRef.current?.close();
-              }}
+              onPress={() => { setTema(opcao.id as any); bottomSheetTemaRef.current?.close(); }}
               activeOpacity={0.8}
             >
               <Ionicons
                 name={opcao.icone as any}
                 size={20}
-                color={
-                  tema === opcao.id
-                    ? CoresFixas.azulClaro
-                    : cores.textSecundario
-                }
+                color={tema === opcao.id ? CoresFixas.azulClaro : cores.textSecundario}
               />
-              <Text
-                style={[
-                  styles.sheetOpcaoTexto,
-                  {
-                    color:
-                      tema === opcao.id
-                        ? CoresFixas.azulClaro
-                        : cores.textPrimario,
-                  },
-                ]}
-              >
+              <Text style={[styles.sheetOpcaoTexto, { color: tema === opcao.id ? CoresFixas.azulClaro : cores.textPrimario }]}>
                 {opcao.label}
               </Text>
               {tema === opcao.id && (
-                <Ionicons
-                  name="checkmark-circle"
-                  size={20}
-                  color={CoresFixas.azulClaro}
-                  style={{ marginLeft: "auto" }}
-                />
+                <Ionicons name="checkmark-circle" size={20} color={CoresFixas.azulClaro} style={{ marginLeft: 'auto' }} />
               )}
             </TouchableOpacity>
           ))}
         </BottomSheetView>
       </BottomSheet>
 
-      {/*BottomSheet da Renda*/}
       <BottomSheet
         ref={bottomSheetRendaRef}
         index={-1}
-        snapPoints={["30%"]}
+        snapPoints={['30%']}
         enablePanDownToClose
         backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: cores.bg }}
+        backgroundStyle={{ backgroundColor: cores.card }}
         handleIndicatorStyle={{ backgroundColor: cores.border }}
       >
-        <BottomSheetView
-          style={[styles.sheetContent, { backgroundColor: cores.bg }]}
-        >
-          <Text style={[styles.sheetTitulo, { color: cores.textPrimario }]}>
-            Renda mensal
-          </Text>
+        <BottomSheetView style={[styles.sheetContent, { backgroundColor: cores.card }]}>
+          <Text style={[styles.sheetTitulo, { color: cores.textPrimario }]}>Renda mensal</Text>
           <TextInput
-            style={[
-              styles.sheetInput,
-              {
-                backgroundColor: cores.bg,
-                borderColor: cores.border,
-                color: cores.textPrimario,
-              },
-            ]}
+            style={[styles.sheetInput, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
             placeholder="Ex: 3000"
             placeholderTextColor={cores.textSecundario}
             keyboardType="numeric"
@@ -396,11 +230,7 @@ export default function PerfilScreen() {
           />
           <TouchableOpacity
             style={styles.sheetBotao}
-            onPress={() => {
-              Keyboard.dismiss();
-              if (rendaTemp) setRenda(rendaTemp);
-              bottomSheetRendaRef.current?.close();
-            }}
+            onPress={() => { Keyboard.dismiss(); if (rendaTemp) setRenda(rendaTemp); bottomSheetRendaRef.current?.close(); }}
             activeOpacity={0.85}
           >
             <Text style={styles.sheetBotaoTexto}>Salvar</Text>
@@ -408,31 +238,19 @@ export default function PerfilScreen() {
         </BottomSheetView>
       </BottomSheet>
 
-      {/*BottomSheet das Horas Trabalhadas*/}
       <BottomSheet
         ref={bottomSheetHorasRef}
         index={-1}
-        snapPoints={["30%"]}
+        snapPoints={['30%']}
         enablePanDownToClose
         backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: cores.bg }}
+        backgroundStyle={{ backgroundColor: cores.card }}
         handleIndicatorStyle={{ backgroundColor: cores.border }}
       >
-        <BottomSheetView
-          style={[styles.sheetContent, { backgroundColor: cores.bg }]}
-        >
-          <Text style={[styles.sheetTitulo, { color: cores.textPrimario }]}>
-            Horas trabalhadas
-          </Text>
+        <BottomSheetView style={[styles.sheetContent, { backgroundColor: cores.card }]}>
+          <Text style={[styles.sheetTitulo, { color: cores.textPrimario }]}>Horas trabalhadas</Text>
           <TextInput
-            style={[
-              styles.sheetInput,
-              {
-                backgroundColor: cores.bg,
-                borderColor: cores.border,
-                color: cores.textPrimario,
-              },
-            ]}
+            style={[styles.sheetInput, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
             placeholder="Ex: 160"
             placeholderTextColor={cores.textSecundario}
             keyboardType="numeric"
@@ -441,11 +259,7 @@ export default function PerfilScreen() {
           />
           <TouchableOpacity
             style={styles.sheetBotao}
-            onPress={() => {
-              Keyboard.dismiss();
-              if (horasTemp) setHoras(horasTemp);
-              bottomSheetHorasRef.current?.close();
-            }}
+            onPress={() => { Keyboard.dismiss(); if (horasTemp) setHoras(horasTemp); bottomSheetHorasRef.current?.close(); }}
             activeOpacity={0.85}
           >
             <Text style={styles.sheetBotaoTexto}>Salvar</Text>
