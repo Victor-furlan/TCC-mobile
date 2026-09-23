@@ -15,6 +15,7 @@ import { useRouter } from 'expo-router';
 import { useTema } from '@/contexts/temaContexto';
 import { useCores } from '@/constants/useCores';
 import { CoresFixas } from '@/constants/cores';
+import { Fontes } from '@/constants/fontes';
 
 export default function AlternarSenhaScreen() {
   const router = useRouter();
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: 24,
-    fontWeight: '800',
+    fontFamily: Fontes.bold,
   },
   card: {
     borderRadius: 16,
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    fontWeight: '600',
+    fontFamily: Fontes.semiBold,
     letterSpacing: 0.3,
   },
   input: {
@@ -170,10 +171,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 15,
+    fontFamily: Fontes.regular,
   },
   erro: {
     color: CoresFixas.erro,
     fontSize: 12,
+    fontFamily: Fontes.regular,
   },
   botao: {
     backgroundColor: CoresFixas.azul,
@@ -190,16 +193,12 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 6,
   },
-  botaoDesabilitado: {
-    opacity: 0.6,
-  },
-  botaoSucesso: {
-    backgroundColor: '#2ecc71',
-  },
+  botaoDesabilitado: { opacity: 0.6 },
+  botaoSucesso: { backgroundColor: '#2ecc71' },
   botaoTexto: {
     color: CoresFixas.branco,
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: Fontes.bold,
     letterSpacing: 0.3,
   },
 });

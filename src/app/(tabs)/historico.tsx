@@ -11,6 +11,7 @@ import { useTema } from '@/contexts/temaContexto';
 import { useCores } from '@/constants/useCores';
 import { CoresFixas } from '@/constants/cores';
 import type { Temacores } from '@/constants/cores';
+import { Fontes } from '@/constants/fontes';
 
 const MOCK_HISTORICO = [
   { id: '1', descricao: 'iFood', valor: 45.9, tipo: 'despesa', categoria: 'Alimentação', emoji: '😰', data: '08/09/2026' },
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: 24,
-    fontWeight: '800',
+    fontFamily: Fontes.bold,
   },
   cardResumo: {
     borderRadius: 20,
@@ -148,11 +149,12 @@ const styles = StyleSheet.create({
   resumoLabel: {
     color: CoresFixas.cardPrincipalLabel,
     fontSize: 13,
+    fontFamily: Fontes.regular,
   },
   resumoValor: {
     color: CoresFixas.branco,
     fontSize: 32,
-    fontWeight: '800',
+    fontFamily: Fontes.bold,
   },
   resumoRow: {
     gap: 4,
@@ -166,6 +168,7 @@ const styles = StyleSheet.create({
   resumoItemTexto: {
     color: CoresFixas.cardPrincipalLabel,
     fontSize: 12,
+    fontFamily: Fontes.regular,
   },
   card: {
     borderRadius: 16,
@@ -185,7 +188,7 @@ const styles = StyleSheet.create({
   },
   cardTitulo: {
     fontSize: 15,
-    fontWeight: '700',
+    fontFamily: Fontes.bold,
   },
   badge: {
     paddingHorizontal: 10,
@@ -194,7 +197,7 @@ const styles = StyleSheet.create({
   },
   badgeTexto: {
     fontSize: 13,
-    fontWeight: '700',
+    fontFamily: Fontes.bold,
   },
   separador: {
     height: 1,
@@ -213,16 +216,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  emoji: {
-    fontSize: 22,
-  },
+  emoji: { fontSize: 22 },
   lancamentoInfo: {
     flex: 1,
     gap: 4,
   },
   lancamentoNome: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: Fontes.semiBold,
   },
   lancamentoMeta: {
     flexDirection: 'row',
@@ -231,16 +232,19 @@ const styles = StyleSheet.create({
   },
   lancamentoCategoria: {
     fontSize: 11,
+    fontFamily: Fontes.regular,
   },
   ponto: {
     fontSize: 11,
+    fontFamily: Fontes.regular,
   },
   lancamentoData: {
     fontSize: 11,
+    fontFamily: Fontes.regular,
   },
   lancamentoValor: {
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: Fontes.bold,
   },
   vazio: {
     paddingVertical: 16,
@@ -248,5 +252,6 @@ const styles = StyleSheet.create({
   },
   vazioTexto: {
     fontSize: 13,
+    fontFamily: Fontes.regular,
   },
 });

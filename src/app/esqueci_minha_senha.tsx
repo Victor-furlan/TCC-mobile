@@ -19,6 +19,7 @@ import { useRouter } from "expo-router";
 import { CoresFixas } from "@/constants/cores";
 import { useCores } from "@/constants/useCores";
 import { useTema } from "@/contexts/temaContexto";
+import { Fontes } from "@/constants/fontes";
 
 function makeSvg(cor: string) {
   return `<svg width="393" height="72" viewBox="0 0 393 72" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 40.2005C0 15.9173 21.4905 -2.71049 45.5834 0.324674C154.55 14.052 232.191 16.92 346.371 1.30801C370.829 -2.03618 393 16.6882 393 41.3738V71.2496H0V40.2005Z" fill="${cor}"/></svg>`;
@@ -168,12 +169,8 @@ export default function EsqueciSenhaScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    paddingBottom: 140,
-  },
+  container: { flex: 1 },
+  header: { paddingBottom: 140 },
   safeHeader: {
     alignItems: "center",
     paddingTop: 50,
@@ -193,36 +190,16 @@ const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: 22,
-    fontWeight: "800",
+    fontFamily: Fontes.bold,
   },
   subtitulo: {
     fontSize: 12,
-    fontWeight: "500",
+    fontFamily: Fontes.medium,
   },
-  onda1: {
-    position: "absolute",
-    top: 259,
-    left: 0,
-    right: 0,
-    zIndex: 7,
-  },
-  onda2: {
-    position: "absolute",
-    top: 285,
-    left: 0,
-    right: 0,
-    zIndex: 8,
-  },
-  onda3: {
-    position: "absolute",
-    top: 317,
-    left: 0,
-    right: 0,
-    zIndex: 9,
-  },
-  card: {
-    flex: 1,
-  },
+  onda1: { position: "absolute", top: 263, left: 0, right: 0, zIndex: 7 },
+  onda2: { position: "absolute", top: 289, left: 0, right: 0, zIndex: 8 },
+  onda3: { position: "absolute", top: 321, left: 0, right: 0, zIndex: 9 },
+  card: { flex: 1 },
   cardConteudo: {
     paddingHorizontal: 36,
     paddingTop: 24,
@@ -237,17 +214,16 @@ const styles = StyleSheet.create({
     height: 56,
     paddingHorizontal: 14,
   },
-  inputIcone: {
-    marginRight: 10,
-  },
+  inputIcone: { marginRight: 10 },
   input: {
     flex: 1,
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: Fontes.semiBold,
   },
   erro: {
     color: CoresFixas.erro,
     fontSize: 12,
+    fontFamily: Fontes.regular,
     marginTop: -4,
   },
   botao: {
@@ -263,13 +239,11 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 6,
   },
-  botaoDesabilitado: {
-    opacity: 0.6,
-  },
+  botaoDesabilitado: { opacity: 0.6 },
   botaoTexto: {
     color: CoresFixas.branco,
     fontSize: 16,
-    fontWeight: "800",
+    fontFamily: Fontes.bold,
     letterSpacing: 0.3,
   },
   rodape: {
@@ -280,15 +254,16 @@ const styles = StyleSheet.create({
   },
   rodapeTexto: {
     fontSize: 14,
+    fontFamily: Fontes.regular,
     opacity: 0.8,
   },
   link: {
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: Fontes.semiBold,
   },
-  // específicos desta tela
   descricao: {
     fontSize: 13,
+    fontFamily: Fontes.regular,
     lineHeight: 20,
     marginBottom: 4,
   },
@@ -297,15 +272,14 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingVertical: 24,
   },
-  sucessoIcone: {
-    fontSize: 48,
-  },
+  sucessoIcone: { fontSize: 48 },
   sucessoTitulo: {
     fontSize: 18,
-    fontWeight: "700",
+    fontFamily: Fontes.bold,
   },
   sucessoTexto: {
     fontSize: 13,
+    fontFamily: Fontes.regular,
     textAlign: "center",
     lineHeight: 20,
   },

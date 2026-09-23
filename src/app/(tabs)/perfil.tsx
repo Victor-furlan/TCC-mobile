@@ -16,6 +16,7 @@ import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/botto
 import { useTema } from '@/contexts/temaContexto';
 import { useCores } from '@/constants/useCores';
 import { CoresFixas } from '@/constants/cores';
+import { Fontes } from '@/constants/fontes';
 
 const MOCK_USUARIO = {
   nome: 'Victor Furlan',
@@ -465,7 +466,7 @@ const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: 24,
-    fontWeight: '800',
+    fontFamily: Fontes.bold,
   },
   cardPerfil: {
     borderRadius: 20,
@@ -484,7 +485,7 @@ const styles = StyleSheet.create({
   },
   avatarLetra: {
     fontSize: 28,
-    fontWeight: '800',
+    fontFamily: Fontes.bold,
     color: CoresFixas.branco,
   },
   perfilInfo: {
@@ -493,15 +494,17 @@ const styles = StyleSheet.create({
   },
   perfilNome: {
     fontSize: 18,
-    fontWeight: '700',
+    fontFamily: Fontes.bold,
     color: CoresFixas.branco,
   },
   perfilEmail: {
     fontSize: 13,
+    fontFamily: Fontes.regular,
     color: 'rgba(255,255,255,0.7)',
   },
   perfilMembro: {
     fontSize: 11,
+    fontFamily: Fontes.regular,
     color: 'rgba(255,255,255,0.5)',
     marginTop: 4,
   },
@@ -513,7 +516,7 @@ const styles = StyleSheet.create({
   },
   cardTitulo: {
     fontSize: 15,
-    fontWeight: '700',
+    fontFamily: Fontes.bold,
     marginBottom: 8,
   },
   baseGrid: {
@@ -530,11 +533,11 @@ const styles = StyleSheet.create({
   },
   baseLabel: {
     fontSize: 11,
-    fontWeight: '600',
+    fontFamily: Fontes.semiBold,
   },
   baseValor: {
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: Fontes.bold,
   },
   itemConfig: {
     flexDirection: 'row',
@@ -553,7 +556,7 @@ const styles = StyleSheet.create({
   itemLabel: {
     flex: 1,
     fontSize: 14,
-    fontWeight: '500',
+    fontFamily: Fontes.medium,
   },
   itemDireita: {
     flexDirection: 'row',
@@ -562,6 +565,7 @@ const styles = StyleSheet.create({
   },
   itemValor: {
     fontSize: 13,
+    fontFamily: Fontes.regular,
   },
   sheetContent: {
     padding: 20,
@@ -570,7 +574,7 @@ const styles = StyleSheet.create({
   },
   sheetTitulo: {
     fontSize: 18,
-    fontWeight: '700',
+    fontFamily: Fontes.bold,
     marginBottom: 4,
   },
   sheetOpcao: {
@@ -583,7 +587,7 @@ const styles = StyleSheet.create({
   },
   sheetOpcaoTexto: {
     fontSize: 15,
-    fontWeight: '500',
+    fontFamily: Fontes.medium,
   },
   sheetInput: {
     borderWidth: 1,
@@ -591,6 +595,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 15,
+    fontFamily: Fontes.regular,
   },
   sheetBotao: {
     backgroundColor: CoresFixas.azul,
@@ -606,6 +611,6 @@ const styles = StyleSheet.create({
   sheetBotaoTexto: {
     color: CoresFixas.branco,
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: Fontes.bold,
   },
 });

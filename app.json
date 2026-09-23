@@ -30,6 +30,17 @@
           "image": "./assets/images/icon.png",
           "imageWidth": 200
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Inter_18pt-Regular.ttf",
+            "./assets/fonts/Inter_18pt-Medium.ttf",
+            "./assets/fonts/Inter_18pt-SemiBold.ttf",
+            "./assets/fonts/Inter_18pt-Bold.ttf"
+          ]
+        }
       ]
     ],
     "experiments": {

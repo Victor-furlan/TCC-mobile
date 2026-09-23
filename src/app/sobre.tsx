@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTema } from '@/contexts/temaContexto';
 import { useCores } from '@/constants/useCores';
 import { CoresFixas } from '@/constants/cores';
+import { Fontes } from '@/constants/fontes';
 
 const INTEGRANTES = [
   { nome: 'Victor Furlan', foto: require('@/assets/images/victor.jpeg') },
@@ -129,12 +130,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
-  botaoVoltar: {
-    padding: 4,
-  },
+  botaoVoltar: { padding: 4 },
   titulo: {
     fontSize: 24,
-    fontWeight: '800',
+    fontFamily: Fontes.bold,
   },
   logoContainer: {
     alignItems: 'center',
@@ -152,10 +151,11 @@ const styles = StyleSheet.create({
   },
   cardTitulo: {
     fontSize: 15,
-    fontWeight: '700',
+    fontFamily: Fontes.bold,
   },
   descricao: {
     fontSize: 14,
+    fontFamily: Fontes.regular,
     lineHeight: 22,
   },
   funcionalidadeItem: {
@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
   funcionalidadeTexto: {
     flex: 1,
     fontSize: 13,
+    fontFamily: Fontes.regular,
     lineHeight: 18,
   },
   integrantesRow: {
@@ -193,10 +194,11 @@ const styles = StyleSheet.create({
   },
   integranteNome: {
     fontSize: 13,
-    fontWeight: '700',
+    fontFamily: Fontes.bold,
   },
   integranteSobrenome: {
     fontSize: 11,
+    fontFamily: Fontes.regular,
   },
   versaoRow: {
     flexDirection: 'row',
@@ -206,9 +208,10 @@ const styles = StyleSheet.create({
   },
   versaoLabel: {
     fontSize: 13,
+    fontFamily: Fontes.regular,
   },
   versaoValor: {
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: Fontes.semiBold,
   },
 });

@@ -2,6 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import { Stack, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import * as SystemUI from 'expo-system-ui'
+import * as Font from 'expo-font'
 import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationBar } from 'expo-navigation-bar';
@@ -14,17 +15,26 @@ function AppLayout() {
   const { isDark } = useTema();
   const pathname = usePathname();
 
+  const [fontsLoaded] = Font.useFonts({
+    'Inter_18pt-Regular': require('../../assets/fonts/Inter_18pt-Regular.ttf'),
+    'Inter_18pt-Medium': require('../../assets/fonts/Inter_18pt-Medium.ttf'),
+    'Inter_18pt-SemiBold': require('../../assets/fonts/Inter_18pt-SemiBold.ttf'),
+    'Inter_18pt-Bold': require('../../assets/fonts/Inter_18pt-Bold.ttf'),
+  });
+
   const isTabs =
     pathname !== "/" &&
     pathname !== "/criar_conta" &&
     pathname !== "esqueci_minha_senha";
 
   useEffect(() => {
-    SplashScreen.hideAsync();
-    {/*essas duas linhas aq trocam a cor do fundo do sistema de acordo com o tema selecionado */}
-    const cor = isTabs ? (isDark ? CoresEscuro.bg : CoresClaro.bg) : (isDark ? CoresEscuro.card : CoresClaro.card)
-    SystemUI.setBackgroundColorAsync(cor)
-  }, [isDark, isTabs]);
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+      {/*essas duas linhas aq trocam a cor do fundo do sistema de acordo com o tema selecionado */}
+      const cor = isTabs ? (isDark ? CoresEscuro.bg : CoresClaro.bg) : (isDark ? CoresEscuro.card : CoresClaro.card)
+      SystemUI.setBackgroundColorAsync(cor)
+    }
+  }, [fontsLoaded, isDark, isTabs]);
 
   return (
     <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>

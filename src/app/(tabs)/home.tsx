@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTema } from '@/contexts/temaContexto';
 import { useCores } from '@/constants/useCores';
 import { CoresFixas } from '@/constants/cores';
+import { Fontes } from '@/constants/fontes';
 
 const MOCK = {
   nome: 'Victor',
