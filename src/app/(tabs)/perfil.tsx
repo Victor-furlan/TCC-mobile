@@ -10,7 +10,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { useRouter } from 'expo-router';
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { useTema } from '@/contexts/temaContexto';
