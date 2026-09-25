@@ -1,15 +1,40 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import { Stack, usePathname } from 'expo-router';
+import { Stack, usePathname, useRouter, useSegments} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import * as SystemUI from 'expo-system-ui'
 import * as Font from 'expo-font'
-import { useEffect } from 'react';
+import { use, useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationBar } from 'expo-navigation-bar';
 import { TemaProvider, useTema } from '@/contexts/temaContexto';
 import { CoresClaro, CoresEscuro } from '@/constants/cores';
+import { AuthProvider, useAuth } from '@/contexts/authContexto';
 
 SplashScreen.preventAutoHideAsync();
+
+function RoteadorProtegido() {
+  const {session, carregando} = useAuth();
+  const segmentos = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if(carregando) return;
+
+    const nasTabs = segmentos[0] === '(tabs)';
+    const telasAuth = ['index', 'criar_conta', 'esqueci_minha_senha'];
+    const naTelaAuth = telasAuth.includes(segmentos[0] as string) || segmentos[0] === undefined;
+
+    if(nasTabs && !session) {
+      //caso o usuario esteja em alguma das paginas na pasta tabs mas não esteja logado ele é jogado de volta pro index
+      router.replace('/')
+    }else if (naTelaAuth && session) {
+      //caso o usuario não esteja nas tabs mas está logado, então ele é jogado pra home dentro das tabs
+      router.replace('/(tabs)/home');
+    }
+  },[session, carregando, segmentos]);
+
+  return null
+}
 
 function AppLayout() {
   const { isDark } = useTema();
@@ -40,6 +65,7 @@ function AppLayout() {
     <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
       {/*o navigationbar server pra sumir e aparecer com a barrinha que tem o botão de voltar, sair, etc, do celular*/}
       <NavigationBar hidden={true} />
+      <RoteadorProtegido />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="criar_conta" />
@@ -57,7 +83,9 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TemaProvider>
-        <AppLayout />
+        <AuthProvider>
+          <AppLayout />
+        </AuthProvider>
       </TemaProvider>
     </GestureHandlerRootView>
   );

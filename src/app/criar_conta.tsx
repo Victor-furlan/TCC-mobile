@@ -20,6 +20,7 @@ import { CoresFixas } from "@/constants/cores";
 import { useCores } from "@/constants/useCores";
 import { useTema } from "@/contexts/temaContexto";
 import { Fontes } from "@/constants/fontes";
+import { useAuth } from "@/contexts/authContexto";
 
 function makeSvg(cor: string) {
   return `<svg width="393" height="72" viewBox="0 0 393 72" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 40.2005C0 15.9173 21.4905 -2.71049 45.5834 0.324674C154.55 14.052 232.191 16.92 346.371 1.30801C370.829 -2.03618 393 16.6882 393 41.3738V71.2496H0V40.2005Z" fill="${cor}"/></svg>`;
@@ -54,6 +55,8 @@ export default function CriarContaScreen() {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
 
+  const {signUp} = useAuth();
+
   async function handleCriarConta() {
     if (!nome || !email || !senha || !confirmarSenha) {
       setErro("Preencha todos os campos.");
@@ -69,10 +72,12 @@ export default function CriarContaScreen() {
     }
     setErro("");
     setCarregando(true);
-    setTimeout(() => {
-      setCarregando(false);
-      router.replace("/");
-    }, 1000);
+    const {erro: erroAuth} = await signUp(email, senha, nome);
+    if(erroAuth) {
+      setErro(erroAuth);
+    }
+
+    setCarregando(false);
   }
 
   return (

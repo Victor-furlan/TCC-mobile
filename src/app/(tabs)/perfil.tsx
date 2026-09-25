@@ -17,6 +17,7 @@ import { useTema } from '@/contexts/temaContexto';
 import { useCores } from '@/constants/useCores';
 import { CoresFixas } from '@/constants/cores';
 import { Fontes } from '@/constants/fontes';
+import { useAuth } from '@/contexts/authContexto';
 
 const MOCK_USUARIO = {
   nome: 'Victor Furlan',
@@ -72,6 +73,8 @@ export default function PerfilScreen() {
   const [horas, setHoras] = useState(MOCK_USUARIO.horasTrabalhadas.toString());
   const [horasTemp, setHorasTemp] = useState('');
 
+  const {signOut} = useAuth();
+
   const valorHora = (Number(renda) / Number(horas)).toFixed(2);
 
   const itemProps = {
@@ -80,6 +83,10 @@ export default function PerfilScreen() {
     border: cores.border,
     inputBg: cores.inputBg,
   };
+
+  async function handleLogOut() {
+    await signOut();
+  }
 
   const renderBackdrop = useCallback(
     (props: any) => <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />,
@@ -280,7 +287,7 @@ export default function PerfilScreen() {
             icone="log-out-outline"
             label="Sair"
             cor={CoresFixas.erro}
-            onPress={() => router.replace("/")}
+            onPress={handleLogOut}
             {...itemProps}
           />
         </View>
