@@ -37,31 +37,42 @@ function makeSvgFundo(cor: string) {
   </svg>`;
 }
 
-export default function LoginScreen() {
+export default function CriarContaScreen() {
   const router = useRouter();
   const cores = useCores();
   const { isDark } = useTema();
 
   const logo = isDark
-    ? require('@/assets/images/logo_completa_mindcash_escura.png')
-    : require('@/assets/images/logo_completa_mindcash_clara.png');
+    ? require("@/assets/images/logo_completa_mindcash_escura.png")
+    : require("@/assets/images/logo_completa_mindcash_clara.png");
 
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
   const [senhaVisivel, setSenhaVisivel] = useState(false);
+  const [confirmarSenhaVisivel, setConfirmarSenhaVisivel] = useState(false);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
-  
-  const {signIn} = useAuth();
 
-  async function handleLogin() {
-    if (!email || !senha) {
+  const {signUp} = useAuth();
+
+  async function handleCriarConta() {
+    if (!nome || !email || !senha || !confirmarSenha) {
       setErro("Preencha todos os campos.");
+      return;
+    }
+    if (senha !== confirmarSenha) {
+      setErro("As senhas não coincidem.");
+      return;
+    }
+    if (senha.length < 6) {
+      setErro("A senha deve ter pelo menos 6 caracteres.");
       return;
     }
     setErro("");
     setCarregando(true);
-    const {erro: erroAuth} = await signIn(email, senha);
+    const {erro: erroAuth} = await signUp(email, senha, nome);
     if(erroAuth) {
       setErro(erroAuth);
     }
@@ -79,42 +90,27 @@ export default function LoginScreen() {
 
       {/* Header */}
       <View style={[styles.header, { backgroundColor: cores.authHeaderBg }]}>
-        {/* SVG decorativo de fundo */}
-        <SvgXml xml={makeSvgFundo(cores.authSvgFundo)} width="420" height="420" style={styles.svgFundo} />
-
+        <SvgXml
+          xml={makeSvgFundo(cores.authSvgFundo)}
+          width="420"
+          height="420"
+          style={styles.svgFundo}
+        />
         <SafeAreaView edges={["top"]} style={styles.safeHeader}>
           <Image source={logo} style={styles.logo} resizeMode="contain" />
           <Text style={[styles.titulo, { color: cores.authTitulo }]}>
-            Bem-vindo ao MindCash
+            Crie sua conta
           </Text>
           <Text style={[styles.subtitulo, { color: cores.authSubtitulo }]}>
-            Entre na sua conta para continuar
+            Comece a controlar seus gastos
           </Text>
         </SafeAreaView>
       </View>
 
       {/* Ondas de transição */}
-      <SvgXml
-        xml={makeSvg(cores.authOnda1)}
-        width="100%"
-        height={72}
-        preserveAspectRatio="none"
-        style={styles.onda1}
-      />
-      <SvgXml
-        xml={makeSvg(cores.authOnda2)}
-        width="100%"
-        height={72}
-        preserveAspectRatio="none"
-        style={styles.onda2}
-      />
-      <SvgXml
-        xml={makeSvg(cores.authOnda3)}
-        width="100%"
-        height={72}
-        preserveAspectRatio="none"
-        style={styles.onda3}
-      />
+      <SvgXml xml={makeSvg(cores.authOnda1)} width="100%" height={72} preserveAspectRatio="none" style={styles.onda1} />
+      <SvgXml xml={makeSvg(cores.authOnda2)} width="100%" height={72} preserveAspectRatio="none" style={styles.onda2} />
+      <SvgXml xml={makeSvg(cores.authOnda3)} width="100%" height={72} preserveAspectRatio="none" style={styles.onda3} />
 
       {/* Formulário */}
       <KeyboardAvoidingView
@@ -127,22 +123,22 @@ export default function LoginScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Campo e-mail */}
-          <View
-            style={[
-              styles.inputWrapper,
-              {
-                backgroundColor: cores.inputBg,
-                borderColor: cores.inputBorder,
-              },
-            ]}
-          >
-            <Ionicons
-              name="mail-outline"
-              size={20}
-              color={CoresFixas.azulClaro}
-              style={styles.inputIcone}
+          {/* Nome */}
+          <View style={[styles.inputWrapper, { backgroundColor: cores.inputBg, borderColor: cores.inputBorder }]}>
+            <Ionicons name="person-outline" size={20} color={CoresFixas.azulClaro} style={styles.inputIcone} />
+            <TextInput
+              style={[styles.input, { color: cores.textPrimario }]}
+              placeholder="Nome"
+              placeholderTextColor={cores.textSecundario}
+              autoCapitalize="words"
+              value={nome}
+              onChangeText={(text) => { setNome(text); setErro(""); }}
             />
+          </View>
+
+          {/* E-mail */}
+          <View style={[styles.inputWrapper, { backgroundColor: cores.inputBg, borderColor: cores.inputBorder }]}>
+            <Ionicons name="mail-outline" size={20} color={CoresFixas.azulClaro} style={styles.inputIcone} />
             <TextInput
               style={[styles.input, { color: cores.textPrimario }]}
               placeholder="E-mail"
@@ -150,44 +146,22 @@ export default function LoginScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                setErro("");
-              }}
+              onChangeText={(text) => { setEmail(text); setErro(""); }}
             />
           </View>
 
-          {/* Campo senha */}
-          <View
-            style={[
-              styles.inputWrapper,
-              {
-                backgroundColor: cores.inputBg,
-                borderColor: cores.inputBorder,
-              },
-            ]}
-          >
-            <Ionicons
-              name="lock-closed-outline"
-              size={20}
-              color={CoresFixas.azulClaro}
-              style={styles.inputIcone}
-            />
+          {/* Senha */}
+          <View style={[styles.inputWrapper, { backgroundColor: cores.inputBg, borderColor: cores.inputBorder }]}>
+            <Ionicons name="lock-closed-outline" size={20} color={CoresFixas.azulClaro} style={styles.inputIcone} />
             <TextInput
               style={[styles.input, { flex: 1, color: cores.textPrimario }]}
               placeholder="Senha"
               placeholderTextColor={cores.textSecundario}
               secureTextEntry={!senhaVisivel}
               value={senha}
-              onChangeText={(text) => {
-                setSenha(text);
-                setErro("");
-              }}
+              onChangeText={(text) => { setSenha(text); setErro(""); }}
             />
-            <TouchableOpacity
-              onPress={() => setSenhaVisivel((v) => !v)}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity onPress={() => setSenhaVisivel((v) => !v)} activeOpacity={0.7}>
               <Ionicons
                 name={senhaVisivel ? "eye-outline" : "eye-off-outline"}
                 size={20}
@@ -196,45 +170,48 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
+          {/* Confirmar senha */}
+          <View style={[styles.inputWrapper, { backgroundColor: cores.inputBg, borderColor: cores.inputBorder }]}>
+            <Ionicons name="lock-closed-outline" size={20} color={CoresFixas.azulClaro} style={styles.inputIcone} />
+            <TextInput
+              style={[styles.input, { flex: 1, color: cores.textPrimario }]}
+              placeholder="Confirmar senha"
+              placeholderTextColor={cores.textSecundario}
+              secureTextEntry={!confirmarSenhaVisivel}
+              value={confirmarSenha}
+              onChangeText={(text) => { setConfirmarSenha(text); setErro(""); }}
+            />
+            <TouchableOpacity onPress={() => setConfirmarSenhaVisivel((v) => !v)} activeOpacity={0.7}>
+              <Ionicons
+                name={confirmarSenhaVisivel ? "eye-outline" : "eye-off-outline"}
+                size={20}
+                color={cores.textSecundario}
+              />
+            </TouchableOpacity>
+          </View>
+
           {erro ? <Text style={styles.erro}>{erro}</Text> : null}
 
-          {/* Esqueci minha senha */}
-          <TouchableOpacity
-            style={styles.esqueciContainer}
-            activeOpacity={0.7}
-            onPress={() => router.push("/esqueci_minha_senha")}
-          >
-            <Text style={[styles.esqueciTexto, { color: cores.authEsqueci }]}>
-              Esqueci minha senha
-            </Text>
-          </TouchableOpacity>
-
-          {/* Botão entrar */}
+          {/* Botão */}
           <TouchableOpacity
             style={[styles.botao, carregando && styles.botaoDesabilitado]}
-            onPress={handleLogin}
+            onPress={handleCriarConta}
             disabled={carregando}
             activeOpacity={0.85}
           >
-            {carregando ? (
-              <ActivityIndicator color={CoresFixas.branco} />
-            ) : (
-              <Text style={styles.botaoTexto}>Entrar</Text>
-            )}
+            {carregando
+              ? <ActivityIndicator color={CoresFixas.branco} />
+              : <Text style={styles.botaoTexto}>Criar conta</Text>
+            }
           </TouchableOpacity>
 
           {/* Rodapé */}
           <View style={styles.rodape}>
             <Text style={[styles.rodapeTexto, { color: cores.textSecundario }]}>
-              Não tem conta?{" "}
+              Já tem conta?{" "}
             </Text>
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => router.push("/criar_conta")}
-            >
-              <Text style={[styles.link, { color: cores.authLink }]}>
-                Criar conta
-              </Text>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
+              <Text style={[styles.link, { color: cores.authLink }]}>Entrar</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -245,7 +222,7 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { paddingBottom: 140 },
+  header: { paddingBottom: 120 },
   safeHeader: {
     alignItems: "center",
     paddingTop: 50,
@@ -271,9 +248,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: Fontes.medium,
   },
-  onda1: { position: "absolute", top: 263, left: 0, right: 0, zIndex: 7 },
-  onda2: { position: "absolute", top: 289, left: 0, right: 0, zIndex: 8 },
-  onda3: { position: "absolute", top: 321, left: 0, right: 0, zIndex: 9 },
+  onda1: { position: "absolute", top: 243, left: 0, right: 0, zIndex: 7 },
+  onda2: { position: "absolute", top: 269, left: 0, right: 0, zIndex: 8 },
+  onda3: { position: "absolute", top: 301, left: 0, right: 0, zIndex: 9 },
   card: { flex: 1 },
   cardConteudo: {
     paddingHorizontal: 36,
@@ -300,14 +277,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: Fontes.regular,
     marginTop: -4,
-  },
-  esqueciContainer: {
-    alignItems: "flex-end",
-    marginTop: -4,
-  },
-  esqueciTexto: {
-    fontSize: 12,
-    fontFamily: Fontes.semiBold,
   },
   botao: {
     backgroundColor: CoresFixas.azul,

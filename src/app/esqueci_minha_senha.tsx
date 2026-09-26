@@ -37,35 +37,35 @@ function makeSvgFundo(cor: string) {
   </svg>`;
 }
 
-export default function LoginScreen() {
+export default function EsqueciSenhaScreen() {
   const router = useRouter();
   const cores = useCores();
   const { isDark } = useTema();
 
   const logo = isDark
-    ? require('@/assets/images/logo_completa_mindcash_escura.png')
-    : require('@/assets/images/logo_completa_mindcash_clara.png');
+    ? require("@/assets/images/logo_completa_mindcash_escura.png")
+    : require("@/assets/images/logo_completa_mindcash_clara.png");
 
   const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [senhaVisivel, setSenhaVisivel] = useState(false);
   const [carregando, setCarregando] = useState(false);
+  const [enviado, setEnviado] = useState(false);
   const [erro, setErro] = useState("");
-  
-  const {signIn} = useAuth();
 
-  async function handleLogin() {
-    if (!email || !senha) {
-      setErro("Preencha todos os campos.");
+  const {resetPassword} = useAuth();
+
+  async function handleEnviar() {
+    if (!email) {
+      setErro("Digite seu e-mail.");
       return;
     }
     setErro("");
     setCarregando(true);
-    const {erro: erroAuth} = await signIn(email, senha);
-    if(erroAuth) {
-      setErro(erroAuth);
+    const {erro: erroAtuh} = await resetPassword(email);
+    if (erroAtuh) {
+      setErro(erroAtuh);
+    }else {
+      setEnviado(true);
     }
-
     setCarregando(false);
   }
 
@@ -79,42 +79,27 @@ export default function LoginScreen() {
 
       {/* Header */}
       <View style={[styles.header, { backgroundColor: cores.authHeaderBg }]}>
-        {/* SVG decorativo de fundo */}
-        <SvgXml xml={makeSvgFundo(cores.authSvgFundo)} width="420" height="420" style={styles.svgFundo} />
-
+        <SvgXml
+          xml={makeSvgFundo(cores.authSvgFundo)}
+          width="420"
+          height="420"
+          style={styles.svgFundo}
+        />
         <SafeAreaView edges={["top"]} style={styles.safeHeader}>
           <Image source={logo} style={styles.logo} resizeMode="contain" />
           <Text style={[styles.titulo, { color: cores.authTitulo }]}>
-            Bem-vindo ao MindCash
+            Esqueci minha senha
           </Text>
           <Text style={[styles.subtitulo, { color: cores.authSubtitulo }]}>
-            Entre na sua conta para continuar
+            Vamos te ajudar a recuperar o acesso
           </Text>
         </SafeAreaView>
       </View>
 
       {/* Ondas de transição */}
-      <SvgXml
-        xml={makeSvg(cores.authOnda1)}
-        width="100%"
-        height={72}
-        preserveAspectRatio="none"
-        style={styles.onda1}
-      />
-      <SvgXml
-        xml={makeSvg(cores.authOnda2)}
-        width="100%"
-        height={72}
-        preserveAspectRatio="none"
-        style={styles.onda2}
-      />
-      <SvgXml
-        xml={makeSvg(cores.authOnda3)}
-        width="100%"
-        height={72}
-        preserveAspectRatio="none"
-        style={styles.onda3}
-      />
+      <SvgXml xml={makeSvg(cores.authOnda1)} width="100%" height={72} preserveAspectRatio="none" style={styles.onda1} />
+      <SvgXml xml={makeSvg(cores.authOnda2)} width="100%" height={72} preserveAspectRatio="none" style={styles.onda2} />
+      <SvgXml xml={makeSvg(cores.authOnda3)} width="100%" height={72} preserveAspectRatio="none" style={styles.onda3} />
 
       {/* Formulário */}
       <KeyboardAvoidingView
@@ -127,113 +112,59 @@ export default function LoginScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Campo e-mail */}
-          <View
-            style={[
-              styles.inputWrapper,
-              {
-                backgroundColor: cores.inputBg,
-                borderColor: cores.inputBorder,
-              },
-            ]}
-          >
-            <Ionicons
-              name="mail-outline"
-              size={20}
-              color={CoresFixas.azulClaro}
-              style={styles.inputIcone}
-            />
-            <TextInput
-              style={[styles.input, { color: cores.textPrimario }]}
-              placeholder="E-mail"
-              placeholderTextColor={cores.textSecundario}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                setErro("");
-              }}
-            />
-          </View>
+          {!enviado ? (
+            <>
+              <Text style={[styles.descricao, { color: cores.textSecundario }]}>
+                Digite seu e-mail e enviaremos um link para redefinir sua senha.
+              </Text>
 
-          {/* Campo senha */}
-          <View
-            style={[
-              styles.inputWrapper,
-              {
-                backgroundColor: cores.inputBg,
-                borderColor: cores.inputBorder,
-              },
-            ]}
-          >
-            <Ionicons
-              name="lock-closed-outline"
-              size={20}
-              color={CoresFixas.azulClaro}
-              style={styles.inputIcone}
-            />
-            <TextInput
-              style={[styles.input, { flex: 1, color: cores.textPrimario }]}
-              placeholder="Senha"
-              placeholderTextColor={cores.textSecundario}
-              secureTextEntry={!senhaVisivel}
-              value={senha}
-              onChangeText={(text) => {
-                setSenha(text);
-                setErro("");
-              }}
-            />
-            <TouchableOpacity
-              onPress={() => setSenhaVisivel((v) => !v)}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name={senhaVisivel ? "eye-outline" : "eye-off-outline"}
-                size={20}
-                color={cores.textSecundario}
-              />
-            </TouchableOpacity>
-          </View>
+              {/* Campo e-mail */}
+              <View style={[styles.inputWrapper, { backgroundColor: cores.inputBg, borderColor: cores.inputBorder }]}>
+                <Ionicons name="mail-outline" size={20} color={CoresFixas.azulClaro} style={styles.inputIcone} />
+                <TextInput
+                  style={[styles.input, { color: cores.textPrimario }]}
+                  placeholder="E-mail"
+                  placeholderTextColor={cores.textSecundario}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  value={email}
+                  onChangeText={(text) => { setEmail(text); setErro(""); }}
+                />
+              </View>
 
-          {erro ? <Text style={styles.erro}>{erro}</Text> : null}
+              {erro ? <Text style={styles.erro}>{erro}</Text> : null}
 
-          {/* Esqueci minha senha */}
-          <TouchableOpacity
-            style={styles.esqueciContainer}
-            activeOpacity={0.7}
-            onPress={() => router.push("/esqueci_minha_senha")}
-          >
-            <Text style={[styles.esqueciTexto, { color: cores.authEsqueci }]}>
-              Esqueci minha senha
-            </Text>
-          </TouchableOpacity>
-
-          {/* Botão entrar */}
-          <TouchableOpacity
-            style={[styles.botao, carregando && styles.botaoDesabilitado]}
-            onPress={handleLogin}
-            disabled={carregando}
-            activeOpacity={0.85}
-          >
-            {carregando ? (
-              <ActivityIndicator color={CoresFixas.branco} />
-            ) : (
-              <Text style={styles.botaoTexto}>Entrar</Text>
-            )}
-          </TouchableOpacity>
+              {/* Botão */}
+              <TouchableOpacity
+                style={[styles.botao, carregando && styles.botaoDesabilitado]}
+                onPress={handleEnviar}
+                disabled={carregando}
+                activeOpacity={0.85}
+              >
+                {carregando
+                  ? <ActivityIndicator color={CoresFixas.branco} />
+                  : <Text style={styles.botaoTexto}>Enviar link</Text>
+                }
+              </TouchableOpacity>
+            </>
+          ) : (
+            /* Estado de sucesso */
+            <View style={styles.sucessoContainer}>
+              <Text style={styles.sucessoIcone}>✉️</Text>
+              <Text style={[styles.sucessoTitulo, { color: cores.textPrimario }]}>
+                E-mail enviado!
+              </Text>
+              <Text style={[styles.sucessoTexto, { color: cores.textSecundario }]}>
+                Verifique sua caixa de entrada e clique no link para redefinir sua senha.
+              </Text>
+            </View>
+          )}
 
           {/* Rodapé */}
           <View style={styles.rodape}>
-            <Text style={[styles.rodapeTexto, { color: cores.textSecundario }]}>
-              Não tem conta?{" "}
-            </Text>
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => router.push("/criar_conta")}
-            >
+            <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
               <Text style={[styles.link, { color: cores.authLink }]}>
-                Criar conta
+                ← Voltar para o login
               </Text>
             </TouchableOpacity>
           </View>
@@ -301,14 +232,6 @@ const styles = StyleSheet.create({
     fontFamily: Fontes.regular,
     marginTop: -4,
   },
-  esqueciContainer: {
-    alignItems: "flex-end",
-    marginTop: -4,
-  },
-  esqueciTexto: {
-    fontSize: 12,
-    fontFamily: Fontes.semiBold,
-  },
   botao: {
     backgroundColor: CoresFixas.azul,
     height: 54,
@@ -343,5 +266,27 @@ const styles = StyleSheet.create({
   link: {
     fontSize: 14,
     fontFamily: Fontes.semiBold,
+  },
+  descricao: {
+    fontSize: 13,
+    fontFamily: Fontes.regular,
+    lineHeight: 20,
+    marginBottom: 4,
+  },
+  sucessoContainer: {
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 24,
+  },
+  sucessoIcone: { fontSize: 48 },
+  sucessoTitulo: {
+    fontSize: 18,
+    fontFamily: Fontes.bold,
+  },
+  sucessoTexto: {
+    fontSize: 13,
+    fontFamily: Fontes.regular,
+    textAlign: "center",
+    lineHeight: 20,
   },
 });
