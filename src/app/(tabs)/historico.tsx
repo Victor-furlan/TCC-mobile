@@ -12,19 +12,28 @@ import { useCores } from '@/constants/useCores';
 import { CoresFixas } from '@/constants/cores';
 import type { Temacores } from '@/constants/cores';
 import { Fontes } from '@/constants/fontes';
+import { useDespesas } from '@/contexts/despesasContexto';
+import { useAssinaturas } from '@/contexts/assinaturasContexto';
 
-const MOCK_HISTORICO = [
-  { id: '1', descricao: 'iFood', valor: 45.9, tipo: 'despesa', categoria: 'Alimentação', emoji: '😰', data: '08/09/2026' },
-  { id: '2', descricao: 'Netflix', valor: 55.9, tipo: 'assinatura', categoria: 'Entretenimento', emoji: '😐', data: '07/09/2026' },
-  { id: '3', descricao: 'Mercado', valor: 187.5, tipo: 'despesa', categoria: 'Alimentação', emoji: '😊', data: '06/09/2026' },
-  { id: '4', descricao: 'Spotify', valor: 21.9, tipo: 'assinatura', categoria: 'Entretenimento', emoji: '😴', data: '05/09/2026' },
-  { id: '5', descricao: 'Uber', valor: 32.0, tipo: 'despesa', categoria: 'Transporte', emoji: '😡', data: '04/09/2026' },
-  { id: '6', descricao: 'Farmácia', valor: 67.3, tipo: 'despesa', categoria: 'Saúde', emoji: '😰', data: '03/09/2026' },
-  { id: '7', descricao: 'Adobe', valor: 89.9, tipo: 'assinatura', categoria: 'Software', emoji: '😊', data: '02/09/2026' },
-  { id: '8', descricao: 'Restaurante', valor: 120.0, tipo: 'despesa', categoria: 'Alimentação', emoji: '😊', data: '01/09/2026' },
-];
+const HUMOR_EMOJI: Record<string, string> = {
+  feliz: '😊',
+  ansioso: '😰',
+  estressado: '😡',
+  cansado: '😴',
+  neutro: '😐',
+};
 
-function ListaLancamentos({ itens, cores }: { itens: typeof MOCK_HISTORICO; cores: Temacores }) {
+type ItemLista = {
+  id: string,
+  descricao: string,
+  valor: number,
+  categoria: string,
+  humor: string,
+  emoji: string,
+  data: string,
+};
+
+function ListaLancamentos({ itens, cores }: { itens: ItemLista[]; cores: Temacores }) {
   if (itens.length === 0) {
     return (
       <View style={styles.vazio}>
@@ -63,12 +72,34 @@ function ListaLancamentos({ itens, cores }: { itens: typeof MOCK_HISTORICO; core
 export default function HistoricoScreen() {
   const { isDark } = useTema();
   const cores = useCores();
+  const {assinaturas} = useAssinaturas();
+  const {despesas} = useDespesas();
 
-  const despesas = MOCK_HISTORICO.filter(i => i.tipo === 'despesa');
-  const assinaturas = MOCK_HISTORICO.filter(i => i.tipo === 'assinatura');
-  const totalDespesas = despesas.reduce((acc, i) => acc + i.valor, 0);
-  const totalAssinaturas = assinaturas.reduce((acc, i) => acc + i.valor, 0);
+  const itensDespesas: ItemLista[] = despesas.map(d => ({
+    id: d.id,
+    descricao: d.nome,
+    valor: Number(d.valor),
+    categoria: d.categoria,
+    humor: d.humor,
+    emoji: HUMOR_EMOJI[d.humor] ?? '😐',
+    data: new Date(d.data + 'T00:00:00').toLocaleDateString('pt-BR'),
+  }));
 
+  const itensAssinaturas: ItemLista[] = assinaturas.map(a => ({
+    id: a.id,
+    descricao: a.nome,
+    valor: Number(a.valor),
+    categoria: a.categoria,
+    humor: a.humor,
+    emoji: HUMOR_EMOJI[a.humor] ?? '😐',
+    data: new Date(a.proxima_cobranca + 'T00:00:00').toLocaleDateString('pt-BR'),
+  }));
+
+  const totalDespesas = itensDespesas.reduce((acc, i) => acc + i.valor, 0);
+  const totalAssinaturas = itensAssinaturas.reduce((acc, i) => acc + i.valor, 0);
+
+  const mesAtual = new Date().toLocaleDateString('pt-BR', {month: 'long', year: 'numeric'});
+ 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: cores.bg }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={cores.bg} />
@@ -76,7 +107,7 @@ export default function HistoricoScreen() {
         <Text style={[styles.titulo, { color: cores.textPrimario }]}>Histórico</Text>
 
         <View style={[styles.cardResumo, { backgroundColor: cores.authHeaderBg }]}>
-          <Text style={styles.resumoLabel}>Total em setembro</Text>
+          <Text style={styles.resumoLabel}>Total em {mesAtual}</Text>
           <Text style={styles.resumoValor}>
             R$ {(totalDespesas + totalAssinaturas).toFixed(2).replace('.', ',')}
           </Text>
@@ -108,7 +139,7 @@ export default function HistoricoScreen() {
               </Text>
             </View>
           </View>
-          <ListaLancamentos itens={despesas} cores={cores} />
+          <ListaLancamentos itens={itensDespesas} cores={cores} />
         </View>
 
         <View style={[styles.card, { backgroundColor: cores.card, borderColor: cores.border }]}>
@@ -123,7 +154,7 @@ export default function HistoricoScreen() {
               </Text>
             </View>
           </View>
-          <ListaLancamentos itens={assinaturas} cores={cores} />
+          <ListaLancamentos itens={itensAssinaturas} cores={cores} />
         </View>
       </ScrollView>
     </SafeAreaView>

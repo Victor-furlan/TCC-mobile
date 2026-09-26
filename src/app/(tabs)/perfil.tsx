@@ -18,15 +18,7 @@ import { useCores } from '@/constants/useCores';
 import { CoresFixas } from '@/constants/cores';
 import { Fontes } from '@/constants/fontes';
 import { useAuth } from '@/contexts/authContexto';
-
-const MOCK_USUARIO = {
-  nome: 'Victor Furlan',
-  email: 'victor@email.com',
-  renda: 3000,
-  horasTrabalhadas: 160,
-  moeda: 'BRL',
-  membro_desde: 'Janeiro 2026',
-};
+import { useUsuario } from '@/contexts/usuarioContexto';
 
 type ItemConfigProps = {
   icone: string;
@@ -64,18 +56,18 @@ export default function PerfilScreen() {
   const { isDark, tema, setTema } = useTema();
   const cores = useCores();
 
+  const {usuario, atualizarHoras, atualizarRenda} = useUsuario();
+
   const bottomSheetTemaRef = useRef<BottomSheet>(null);
   const bottomSheetRendaRef = useRef<BottomSheet>(null);
   const bottomSheetHorasRef = useRef<BottomSheet>(null);
 
-  const [renda, setRenda] = useState(MOCK_USUARIO.renda.toString());
   const [rendaTemp, setRendaTemp] = useState('');
-  const [horas, setHoras] = useState(MOCK_USUARIO.horasTrabalhadas.toString());
   const [horasTemp, setHorasTemp] = useState('');
 
   const {signOut} = useAuth();
 
-  const valorHora = (Number(renda) / Number(horas)).toFixed(2);
+  const valorHora = usuario ? (usuario.renda_mensal / usuario.horas_trabalhadas).toFixed(2) : '0.00';
 
   const itemProps = {
     textPrimario: cores.textPrimario,
@@ -112,14 +104,14 @@ export default function PerfilScreen() {
         >
           <View style={styles.avatar}>
             <Text style={styles.avatarLetra}>
-              {MOCK_USUARIO.nome.charAt(0).toUpperCase()}
+              {usuario?.nome.charAt(0).toUpperCase() ?? '?'}
             </Text>
           </View>
           <View style={styles.perfilInfo}>
-            <Text style={styles.perfilNome}>{MOCK_USUARIO.nome}</Text>
-            <Text style={styles.perfilEmail}>{MOCK_USUARIO.email}</Text>
+            <Text style={styles.perfilNome}>{usuario?.nome ?? ''}</Text>
+            <Text style={styles.perfilEmail}>{usuario?.email ?? ''}</Text>
             <Text style={styles.perfilMembro}>
-              Membro desde {MOCK_USUARIO.membro_desde}
+              Membro desde {usuario?.criado_em ? new Date(usuario.criado_em).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : '?'}
             </Text>
           </View>
         </View>
@@ -149,7 +141,7 @@ export default function PerfilScreen() {
                 Renda mensal
               </Text>
               <Text style={[styles.baseValor, { color: cores.textPrimario }]}>
-                R$ {Number(renda).toLocaleString("pt-BR")}
+                R$ {Number(usuario?.renda_mensal ?? 0).toLocaleString("pt-BR")}
               </Text>
             </View>
             <View
@@ -167,7 +159,7 @@ export default function PerfilScreen() {
                 Horas/mês
               </Text>
               <Text style={[styles.baseValor, { color: cores.textPrimario }]}>
-                {horas}h
+                {usuario?.horas_trabalhadas ?? 0 }h
               </Text>
             </View>
             <View
@@ -215,9 +207,9 @@ export default function PerfilScreen() {
           <ItemConfig
             icone="cash-outline"
             label="Renda mensal"
-            valor={`R$ ${Number(renda).toLocaleString("pt-BR")}`}
+            valor={`R$ ${Number(usuario?.renda_mensal).toLocaleString("pt-BR")}`}
             onPress={() => {
-              setRendaTemp(renda);
+              setRendaTemp(String(usuario?.renda_mensal ?? ''));
               bottomSheetRendaRef.current?.expand();
             }}
             {...itemProps}
@@ -225,9 +217,9 @@ export default function PerfilScreen() {
           <ItemConfig
             icone="time-outline"
             label="Horas trabalhadas"
-            valor={`${horas}h/mês`}
+            valor={`${usuario?.horas_trabalhadas}h/mês`}
             onPress={() => {
-              setHorasTemp(horas);
+              setHorasTemp(String(usuario?.horas_trabalhadas ?? ''));
               bottomSheetHorasRef.current?.expand();
             }}
             {...itemProps}
@@ -404,9 +396,9 @@ export default function PerfilScreen() {
           />
           <TouchableOpacity
             style={styles.sheetBotao}
-            onPress={() => {
+            onPress={ async () => {
               Keyboard.dismiss();
-              if (rendaTemp) setRenda(rendaTemp);
+              if (rendaTemp) await atualizarRenda(Number(rendaTemp));
               bottomSheetRendaRef.current?.close();
             }}
             activeOpacity={0.85}
@@ -449,9 +441,9 @@ export default function PerfilScreen() {
           />
           <TouchableOpacity
             style={styles.sheetBotao}
-            onPress={() => {
+            onPress={ async () => {
               Keyboard.dismiss();
-              if (horasTemp) setHoras(horasTemp);
+              if (horasTemp) await atualizarHoras(Number(horasTemp));
               bottomSheetHorasRef.current?.close();
             }}
             activeOpacity={0.85}

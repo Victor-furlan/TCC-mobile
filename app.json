@@ -41,7 +41,8 @@
             "./assets/fonts/Inter_18pt-Bold.ttf"
           ]
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true,

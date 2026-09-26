@@ -11,10 +11,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from "react-native-vector-icons/Ionicons";
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTema } from '@/contexts/temaContexto';
 import { useCores } from '@/constants/useCores';
 import { CoresFixas } from '@/constants/cores';
 import { Fontes } from '@/constants/fontes';
+import { useAssinaturas } from '@/contexts/assinaturasContexto';
+import { useDespesas } from '@/contexts/despesasContexto';
 
 const CATEGORIAS = [
   { id: 'entretenimento', label: 'Entretenimento', icone: 'film-outline' },
@@ -72,32 +75,64 @@ export default function RegistrarScreen() {
   const [humor, setHumor] = useState('');
   const [motivo, setMotivo] = useState('');
   const [arrependimento, setArrependimento] = useState(0);
-  const [data, setData] = useState('');
+  const [dataObj, setDataObj] = useState(new Date());
+  const [cobrancaObj, setCobrancaObj] = useState(new Date());
+  const [mostrarPickerData, setMostrarPickerData] = useState(false);
+  const [mostrarPickerCobranca, setMostrarPickerCobranca] = useState(false);
   const [periodicidade, setPeriodicidade] = useState('');
-  const [proximaCobranca, setProximaCobranca] = useState('');
   const [carregando, setCarregando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
 
+  const { adicionarDespesa } = useDespesas();
+  const { adicionarAssinatura } = useAssinaturas();
+
   function limparCampos() {
     setDescricao(''); setValor(''); setCategoria(''); setHumor('');
-    setMotivo(''); setArrependimento(0); setData('');
-    setPeriodicidade(''); setProximaCobranca('');
+    setMotivo(''); setArrependimento(0); setDataObj(new Date());
+    setCobrancaObj(new Date()); setPeriodicidade('');
   }
 
-  function handleSalvar() {
+  function getLabelCategoria(id: string): string {
+    return CATEGORIAS.find(c => c.id === id)?.label ?? id;
+  }
+
+  async function handleSalvar() {
     if (!valor || !descricao || !categoria) return;
     setCarregando(true);
-    setTimeout(() => {
-      setCarregando(false);
-      setSucesso(true);
-      setTimeout(() => { setSucesso(false); limparCampos(); }, 1500);
-    }, 1000);
+
+    if (tipo === 'despesa') {
+      const { erro } = await adicionarDespesa({
+        nome: descricao,
+        valor: Number(valor.replace(',', '.')),
+        data: dataObj.toISOString().split('T')[0],
+        categoria: getLabelCategoria(categoria),
+        humor,
+        motivo,
+        nivel_arrependimento: arrependimento,
+      });
+      if (erro) { setCarregando(false); return; }
+    } else {
+      const { erro } = await adicionarAssinatura({
+        nome: descricao,
+        valor: Number(valor.replace(',', '.')),
+        periodicidade,
+        categoria: getLabelCategoria(categoria),
+        proxima_cobranca: cobrancaObj.toISOString().split('T')[0],
+        humor,
+        motivo,
+        nivel_arrependimento: arrependimento,
+      });
+      if (erro) { setCarregando(false); return; }
+    }
+
+    setCarregando(false);
+    setSucesso(true);
+    setTimeout(() => { setSucesso(false); limparCampos(); }, 1500);
   }
 
   const podeSalvar = valor && descricao && categoria &&
     (tipo === 'despesa' || (tipo === 'assinatura' && periodicidade));
 
-  // estilo do botão de tipo ativo — usa authHeaderBg pra consistência com o resto do app
   const estiloAtivo = { backgroundColor: cores.authHeaderBg, borderColor: cores.authHeaderBg };
 
   return (
@@ -120,9 +155,7 @@ export default function RegistrarScreen() {
               activeOpacity={0.8}
             >
               <Ionicons name="cart-outline" size={18} color={tipo === 'despesa' ? CoresFixas.branco : cores.textSecundario} />
-              <Text style={[styles.tipoTexto, { color: tipo === 'despesa' ? CoresFixas.branco : cores.textSecundario }]}>
-                Despesa
-              </Text>
+              <Text style={[styles.tipoTexto, { color: tipo === 'despesa' ? CoresFixas.branco : cores.textSecundario }]}>Despesa</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.tipoBotao, { borderColor: cores.border }, tipo === 'assinatura' && estiloAtivo]}
@@ -130,9 +163,7 @@ export default function RegistrarScreen() {
               activeOpacity={0.8}
             >
               <Ionicons name="repeat-outline" size={18} color={tipo === 'assinatura' ? CoresFixas.branco : cores.textSecundario} />
-              <Text style={[styles.tipoTexto, { color: tipo === 'assinatura' ? CoresFixas.branco : cores.textSecundario }]}>
-                Assinatura
-              </Text>
+              <Text style={[styles.tipoTexto, { color: tipo === 'assinatura' ? CoresFixas.branco : cores.textSecundario }]}>Assinatura</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -156,14 +187,27 @@ export default function RegistrarScreen() {
             <View style={styles.linha}>
               <View style={[styles.campo, { flex: 1 }]}>
                 <Text style={[styles.label, { color: cores.textSecundario }]}>Data</Text>
-                <TextInput
-                  style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
-                  placeholder="DD/MM/AAAA"
-                  placeholderTextColor={cores.textSecundario}
-                  keyboardType="numeric"
-                  value={data}
-                  onChangeText={setData}
-                />
+                <TouchableOpacity
+                  style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, justifyContent: 'center' }]}
+                  onPress={() => setMostrarPickerData(true)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={{ color: cores.textPrimario, fontFamily: Fontes.regular, fontSize: 15 }}>
+                    {dataObj.toLocaleDateString('pt-BR')}
+                  </Text>
+                </TouchableOpacity>
+                {mostrarPickerData && (
+                  <DateTimePicker
+                    value={dataObj}
+                    mode="date"
+                    display="default"
+                    onValueChange={(_, date) => {
+                      setMostrarPickerData(false);
+                      if (date) setDataObj(date);
+                    }}
+                    onDismiss={() => setMostrarPickerData(false)}
+                  />
+                )}
               </View>
               <View style={[styles.campo, { flex: 1 }]}>
                 <Text style={[styles.label, { color: cores.textSecundario }]}>Valor (R$)</Text>
@@ -193,14 +237,27 @@ export default function RegistrarScreen() {
                 </View>
                 <View style={[styles.campo, { flex: 1 }]}>
                   <Text style={[styles.label, { color: cores.textSecundario }]}>Próxima cobrança</Text>
-                  <TextInput
-                    style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, color: cores.textPrimario }]}
-                    placeholder="DD/MM/AAAA"
-                    placeholderTextColor={cores.textSecundario}
-                    keyboardType="numeric"
-                    value={proximaCobranca}
-                    onChangeText={setProximaCobranca}
-                  />
+                  <TouchableOpacity
+                    style={[styles.input, { backgroundColor: cores.inputBg, borderColor: cores.border, justifyContent: 'center' }]}
+                    onPress={() => setMostrarPickerCobranca(true)}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={{ color: cores.textPrimario, fontFamily: Fontes.regular, fontSize: 15 }}>
+                      {cobrancaObj.toLocaleDateString('pt-BR')}
+                    </Text>
+                  </TouchableOpacity>
+                  {mostrarPickerCobranca && (
+                    <DateTimePicker
+                      value={cobrancaObj}
+                      mode="date"
+                      display="default"
+                      onValueChange={(_, date) => {
+                        setMostrarPickerCobranca(false);
+                        if (date) setCobrancaObj(date);
+                      }}
+                      onDismiss={() => setMostrarPickerCobranca(false)}
+                    />
+                  )}
                 </View>
               </View>
 
@@ -240,11 +297,7 @@ export default function RegistrarScreen() {
                 onPress={() => setCategoria(cat.id)}
                 activeOpacity={0.8}
               >
-                <Ionicons
-                  name={cat.icone as any}
-                  size={22}
-                  color={categoria === cat.id ? cores.authHeaderBg : cores.textSecundario}
-                />
+                <Ionicons name={cat.icone as any} size={22} color={categoria === cat.id ? cores.authHeaderBg : cores.textSecundario} />
                 <Text style={[styles.categoriaLabel, { color: categoria === cat.id ? cores.authHeaderBg : cores.textSecundario }]}>
                   {cat.label}
                 </Text>
@@ -335,53 +388,25 @@ export default function RegistrarScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
-  scroll: {
-    padding: 20,
-    gap: 16,
-    paddingBottom: 32,
-  },
-  titulo: {
-    fontSize: 24,
-    fontFamily: Fontes.bold,
-  },
-  card: {
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 16,
-    gap: 14,
-  },
-  cardTitulo: {
-    fontSize: 15,
-    fontFamily: Fontes.bold,
-  },
-  tipoRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
+  scroll: { padding: 20, gap: 16, paddingBottom: 32 },
+  titulo: { fontSize: 24, fontFamily: Fontes.bold },
+  card: { borderRadius: 16, borderWidth: 1, padding: 16, gap: 14 },
+  cardTitulo: { fontSize: 15, fontFamily: Fontes.bold },
+  tipoRow: { flexDirection: "row", gap: 10 },
   tipoBotao: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 6,
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
   },
-  tipoTexto: {
-    fontSize: 14,
-    fontFamily: Fontes.semiBold,
-  },
-  linha: {
-    flexDirection: 'row',
-    gap: 10,
-  },
+  tipoTexto: { fontSize: 14, fontFamily: Fontes.semiBold },
+  linha: { flexDirection: "row", gap: 10 },
   campo: { gap: 6 },
-  label: {
-    fontSize: 12,
-    fontFamily: Fontes.semiBold,
-    letterSpacing: 0.3,
-  },
+  label: { fontSize: 12, fontFamily: Fontes.semiBold, letterSpacing: 0.3 },
   input: {
     borderWidth: 1,
     borderRadius: 12,
@@ -398,67 +423,46 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: Fontes.regular,
     minHeight: 80,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
-  categoriaGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
+  categoriaGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   categoriaItem: {
-    width: '30%',
-    alignItems: 'center',
+    width: "30%",
+    alignItems: "center",
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
     gap: 4,
   },
-  categoriaLabel: {
-    fontSize: 11,
-    fontFamily: Fontes.semiBold,
-  },
-  humorRow: {
-    flexDirection: 'row',
-    gap: 6,
-  },
+  categoriaLabel: { fontSize: 11, fontFamily: Fontes.semiBold },
+  humorRow: { flexDirection: "row", gap: 6 },
   humorItem: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 10,
     borderRadius: 12,
     borderWidth: 1,
     gap: 4,
   },
   humorEmoji: { fontSize: 20 },
-  humorLabel: {
-    fontSize: 10,
-    fontFamily: Fontes.semiBold,
-  },
-  estrelasRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  limparTexto: {
-    fontSize: 13,
-    fontFamily: Fontes.regular,
-    marginLeft: 4,
-  },
+  humorLabel: { fontSize: 10, fontFamily: Fontes.semiBold },
+  estrelasRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  limparTexto: { fontSize: 13, fontFamily: Fontes.regular, marginLeft: 4 },
   botao: {
     borderRadius: 12,
     paddingVertical: 16,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
     gap: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 6,
   },
   botaoDesabilitado: { opacity: 0.4 },
-  botaoSucesso: { backgroundColor: '#2ecc71' },
+  botaoSucesso: { backgroundColor: "#2ecc71" },
   botaoTexto: {
     color: CoresFixas.branco,
     fontSize: 16,

@@ -9,6 +9,9 @@ import { NavigationBar } from 'expo-navigation-bar';
 import { TemaProvider, useTema } from '@/contexts/temaContexto';
 import { CoresClaro, CoresEscuro } from '@/constants/cores';
 import { AuthProvider, useAuth } from '@/contexts/authContexto';
+import { UsuarioProvider } from '@/contexts/usuarioContexto';
+import { AssinaturasProvider } from '@/contexts/assinaturasContexto';
+import { DespesasProvider } from '@/contexts/despesasContexto';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -84,7 +87,13 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TemaProvider>
         <AuthProvider>
-          <AppLayout />
+          <UsuarioProvider>
+            <AssinaturasProvider>
+              <DespesasProvider>
+                <AppLayout />
+              </DespesasProvider>
+            </AssinaturasProvider>
+          </UsuarioProvider>
         </AuthProvider>
       </TemaProvider>
     </GestureHandlerRootView>
