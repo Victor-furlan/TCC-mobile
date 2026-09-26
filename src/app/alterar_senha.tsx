@@ -1,13 +1,7 @@
 import { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  StatusBar,
-  ActivityIndicator,
+  View, Text, TextInput, TouchableOpacity,
+  StyleSheet, ScrollView, StatusBar, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -16,11 +10,14 @@ import { useTema } from '@/contexts/temaContexto';
 import { useCores } from '@/constants/useCores';
 import { CoresFixas } from '@/constants/cores';
 import { Fontes } from '@/constants/fontes';
+import { useAuth } from '@/contexts/authContexto';
+import { supabase } from '@/services/supabase';
 
 export default function AlternarSenhaScreen() {
   const router = useRouter();
   const { isDark } = useTema();
   const cores = useCores();
+  const { session } = useAuth();
 
   const [senhaAtual, setSenhaAtual] = useState('');
   const [novaSenha, setNovaSenha] = useState('');
@@ -29,7 +26,7 @@ export default function AlternarSenhaScreen() {
   const [sucesso, setSucesso] = useState(false);
   const [erro, setErro] = useState('');
 
-  function handleSalvar() {
+  async function handleSalvar() {
     if (!senhaAtual || !novaSenha || !confirmarSenha) {
       setErro('Preencha todos os campos.');
       return;
@@ -42,13 +39,36 @@ export default function AlternarSenhaScreen() {
       setErro('A nova senha deve ter pelo menos 6 caracteres.');
       return;
     }
+
     setErro('');
     setCarregando(true);
-    setTimeout(() => {
+
+    // Verifica senha atual com signIn silencioso
+    const { error: erroVerificacao } = await supabase.auth.signInWithPassword({
+      email: session!.user.email!,
+      password: senhaAtual,
+    });
+
+    if (erroVerificacao) {
+      setErro('Senha atual incorreta.');
       setCarregando(false);
-      setSucesso(true);
-      setTimeout(() => router.back(), 1500);
-    }, 1000);
+      return;
+    }
+
+    // Atualiza para nova senha
+    const { error: erroAlteracao } = await supabase.auth.updateUser({
+      password: novaSenha,
+    });
+
+    setCarregando(false);
+
+    if (erroAlteracao) {
+      setErro("Erro ao alterar senha. Tente novamente.");
+      return;
+    }
+
+    setSucesso(true);
+    setTimeout(() => router.back(), 1500);
   }
 
   return (
@@ -106,11 +126,7 @@ export default function AlternarSenhaScreen() {
           {erro ? <Text style={styles.erro}>{erro}</Text> : null}
 
           <TouchableOpacity
-            style={[
-              styles.botao,
-              carregando && styles.botaoDesabilitado,
-              sucesso && styles.botaoSucesso,
-            ]}
+            style={[styles.botao, carregando && styles.botaoDesabilitado, sucesso && styles.botaoSucesso]}
             onPress={handleSalvar}
             disabled={carregando}
             activeOpacity={0.85}
@@ -134,37 +150,13 @@ export default function AlternarSenhaScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
-  scroll: {
-    padding: 20,
-    gap: 16,
-    paddingBottom: 32,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  botaoVoltar: {
-    padding: 4,
-  },
-  titulo: {
-    fontSize: 24,
-    fontFamily: Fontes.bold,
-  },
-  card: {
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 16,
-    gap: 14,
-  },
-  campo: {
-    gap: 6,
-  },
-  label: {
-    fontSize: 12,
-    fontFamily: Fontes.semiBold,
-    letterSpacing: 0.3,
-  },
+  scroll: { padding: 20, gap: 16, paddingBottom: 32 },
+  header: { flexDirection: "row", alignItems: "center", gap: 12 },
+  botaoVoltar: { padding: 4 },
+  titulo: { fontSize: 24, fontFamily: Fontes.bold },
+  card: { borderRadius: 16, borderWidth: 1, padding: 16, gap: 14 },
+  campo: { gap: 6 },
+  label: { fontSize: 12, fontFamily: Fontes.semiBold, letterSpacing: 0.3 },
   input: {
     borderWidth: 1,
     borderRadius: 12,
@@ -173,18 +165,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: Fontes.regular,
   },
-  erro: {
-    color: CoresFixas.erro,
-    fontSize: 12,
-    fontFamily: Fontes.regular,
-  },
+  erro: { color: CoresFixas.erro, fontSize: 12, fontFamily: Fontes.regular },
   botao: {
     backgroundColor: CoresFixas.azul,
     borderRadius: 12,
     paddingVertical: 14,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
     gap: 8,
     marginTop: 4,
     shadowColor: CoresFixas.azul,
@@ -194,7 +182,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   botaoDesabilitado: { opacity: 0.6 },
-  botaoSucesso: { backgroundColor: '#2ecc71' },
+  botaoSucesso: { backgroundColor: "#2ecc71" },
   botaoTexto: {
     color: CoresFixas.branco,
     fontSize: 16,

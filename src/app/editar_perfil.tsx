@@ -1,13 +1,7 @@
 import { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  StatusBar,
-  ActivityIndicator,
+  View, Text, TextInput, TouchableOpacity,
+  StyleSheet, ScrollView, StatusBar, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -16,35 +10,53 @@ import { useTema } from '@/contexts/temaContexto';
 import { useCores } from '@/constants/useCores';
 import { CoresFixas } from '@/constants/cores';
 import { Fontes } from '@/constants/fontes';
-
-const MOCK_USUARIO = {
-  nome: 'Victor Furlan',
-  email: 'victor@email.com',
-};
+import { useUsuario } from '@/contexts/usuarioContexto';
+import { useAuth } from '@/contexts/authContexto';
+import { supabase } from '@/services/supabase';
 
 export default function EditarPerfilScreen() {
   const router = useRouter();
   const { isDark } = useTema();
   const cores = useCores();
+  const { usuario } = useUsuario();
+  const { session } = useAuth();
 
-  const [nome, setNome] = useState(MOCK_USUARIO.nome);
-  const [email, setEmail] = useState(MOCK_USUARIO.email);
+  const [nome, setNome] = useState(usuario?.nome ?? '');
+  const [email, setEmail] = useState(session?.user.email ?? '');
   const [carregando, setCarregando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
   const [erro, setErro] = useState('');
 
-  function handleSalvar() {
-    if (!nome || !email) {
+  async function handleSalvar() {
+    if (!nome.trim() || !email.trim()) {
       setErro('Preencha todos os campos.');
       return;
     }
     setErro('');
     setCarregando(true);
-    setTimeout(() => {
-      setCarregando(false);
-      setSucesso(true);
-      setTimeout(() => router.back(), 1500);
-    }, 1000);
+
+    // Atualiza nome na tabela usuarios
+    const { error: erroNome } = await supabase
+                                      .from('usuarios')
+                                      .update({ nome: nome.trim() })
+                                      .eq('id', session!.user.id);
+
+    // Atualiza email no Auth
+    let erroEmail = null;
+    if (email.trim() !== session?.user.email) {
+      const { error } = await supabase.auth.updateUser({ email: email.trim() });
+      erroEmail = error;
+    }
+
+    setCarregando(false);
+
+    if (erroNome || erroEmail) {
+      setErro('Erro ao salvar. Tente novamente.');
+      return;
+    }
+
+    setSucesso(true);
+    setTimeout(() => router.back(), 1500);
   }
 
   return (
@@ -91,11 +103,7 @@ export default function EditarPerfilScreen() {
           {erro ? <Text style={styles.erro}>{erro}</Text> : null}
 
           <TouchableOpacity
-            style={[
-              styles.botao,
-              carregando && styles.botaoDesabilitado,
-              sucesso && styles.botaoSucesso,
-            ]}
+            style={[styles.botao, carregando && styles.botaoDesabilitado, sucesso && styles.botaoSucesso]}
             onPress={handleSalvar}
             disabled={carregando}
             activeOpacity={0.85}
@@ -119,33 +127,13 @@ export default function EditarPerfilScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
-  scroll: {
-    padding: 20,
-    gap: 16,
-    paddingBottom: 32,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
+  scroll: { padding: 20, gap: 16, paddingBottom: 32 },
+  header: { flexDirection: "row", alignItems: "center", gap: 12 },
   botaoVoltar: { padding: 4 },
-  titulo: {
-    fontSize: 24,
-    fontFamily: Fontes.bold,
-  },
-  card: {
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 16,
-    gap: 14,
-  },
+  titulo: { fontSize: 24, fontFamily: Fontes.bold },
+  card: { borderRadius: 16, borderWidth: 1, padding: 16, gap: 14 },
   campo: { gap: 6 },
-  label: {
-    fontSize: 12,
-    fontFamily: Fontes.semiBold,
-    letterSpacing: 0.3,
-  },
+  label: { fontSize: 12, fontFamily: Fontes.semiBold, letterSpacing: 0.3 },
   input: {
     borderWidth: 1,
     borderRadius: 12,
@@ -154,18 +142,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: Fontes.regular,
   },
-  erro: {
-    color: CoresFixas.erro,
-    fontSize: 12,
-    fontFamily: Fontes.regular,
-  },
+  erro: { color: CoresFixas.erro, fontSize: 12, fontFamily: Fontes.regular },
   botao: {
     backgroundColor: CoresFixas.azul,
     borderRadius: 12,
     paddingVertical: 14,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
     gap: 8,
     marginTop: 4,
     shadowColor: CoresFixas.azul,
@@ -175,7 +159,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   botaoDesabilitado: { opacity: 0.6 },
-  botaoSucesso: { backgroundColor: '#2ecc71' },
+  botaoSucesso: { backgroundColor: "#2ecc71" },
   botaoTexto: {
     color: CoresFixas.branco,
     fontSize: 16,
